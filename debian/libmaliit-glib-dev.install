@@ -1,0 +1,4 @@
+usr/include/maliit/maliit-glib
+usr/lib/libmaliit-glib.so
+usr/lib/pkgconfig/maliit-glib.pc
+usr/share/gir-1.0

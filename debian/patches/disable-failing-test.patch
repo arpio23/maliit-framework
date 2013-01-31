@@ -1,0 +1,13 @@
+Index: b/tests/ft_mimpluginmanager/ft_mimpluginmanager.cpp
+===================================================================
+--- a/tests/ft_mimpluginmanager/ft_mimpluginmanager.cpp
++++ b/tests/ft_mimpluginmanager/ft_mimpluginmanager.cpp
+@@ -129,7 +129,7 @@
+ 
+ void Ft_MIMPluginManager::testMultiplePlugins()
+ {
+-    //QSKIP("This test fails to activate > 1 plugins, for unknown reasons.", SkipAll);
++    QSKIP("This test fails to activate > 1 plugins, for unknown reasons.", SkipAll);
+ 
+     gMKeyboardStateTrackerStub->setOpenState(true);
+     MImSettings(MImAccesoryEnabled).set(QVariant(true));

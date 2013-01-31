@@ -1,0 +1,235 @@
+Source: maliit-framework
+Section: libs
+Priority: extra
+Maintainer: Debian Mobile Team <debian-mobile@lists.debian.org>
+Uploaders: Michał Zając <quintasan@kubuntu.org>, Iain Lane <laney@debian.org>
+Build-Depends: debhelper (>= 7.0.50),
+               doxygen,
+               gobject-introspection,
+               graphviz,
+               gtk-doc-tools,
+               libdbus-glib-1-dev,
+               libgirepository1.0-dev,
+               libglib2.0-dev,
+               libgtk-3-dev,
+               libgtk2.0-dev,
+               libqt4-dev (>= 4.6),
+               libudev-dev,
+               libxcb-xfixes0-dev,
+               libxcomposite-dev,
+               libxdamage-dev,
+               libxext-dev,
+               libxfixes-dev,
+               pkg-config,
+               xauth,
+               xvfb
+Standards-Version: 3.9.4
+
+Package: maliit-framework
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Recommends: maliit-inputcontext-gtk2,
+            maliit-inputcontext-gtk3,
+            maliit-inputcontext-qt4,
+            maliit-inputmethod-plugin
+Description: text input method framework
+ Maliit provides a flexible and cross-platform input method framework for
+ mobile and embedded text input. It has a plugin-based client-server
+ architecture where applications act as clients and communicate with the Maliit
+ server via toolkit-specific input context plugins.
+ .
+ This package enables integration with Qt and GTK+ applications and manages the
+ Maliit plugins.
+
+Package: maliit-framework-dev
+Architecture: any
+Section: libdevel
+Depends: libqt4-dev (>= 4.7),
+         maliit-framework (>= ${source:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Description: text input method framework - development files
+ Maliit provides a flexible and cross-platform input method framework for
+ mobile and embedded text input. It has a plugin-based client-server
+ architecture where applications act as clients and communicate with the Maliit
+ server via toolkit-specific input context plugins.
+ .
+ This package contains development header for maliit-framework and is required
+ when writing custom Maliit plugins.
+
+Package: maliit-framework-dbg
+Section: debug
+Architecture: any
+Depends: maliit-framework (= ${binary:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Description: text input method framework - debug symbols
+ Maliit provides a flexible and cross-platform input method framework for
+ mobile and embedded text input. It has a plugin-based client-server
+ architecture where applications act as clients and communicate with the Maliit
+ server via toolkit-specific input context plugins.
+ .
+ This package contains debugging symbols for maliit-framework.
+
+Package: maliit-inputcontext-gtk2
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: Maliit input context for GTK+ 2 applications
+ Maliit provides a flexible and cross-platform input method framework for
+ mobile and embedded text input. It has a plugin-based client-server
+ architecture where applications act as clients and communicate with the Maliit
+ server via toolkit-specific input context plugins.
+ .
+ A GTK+ 2 specific input context plugin. Turns GTK+ 2 applications into Maliit
+ clients that can communicate with maliit-server.
+
+Package: maliit-inputcontext-gtk3
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: Maliit input context for GTK+ 3 applications
+ Maliit provides a flexible and cross-platform input method framework for
+ mobile and embedded text input. It has a plugin-based client-server
+ architecture where applications act as clients and communicate with the Maliit
+ server via toolkit-specific input context plugins.
+ .
+ A GTK+ 3 specific input context plugin. Turns GTK+ 3 applications into Maliit
+ clients that can communicate with maliit-server.
+
+Package: maliit-inputcontext-qt4
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: Maliit input context for Qt 4 applications
+ Maliit provides a flexible and cross-platform input method framework for
+ mobile and embedded text input. It has a plugin-based client-server
+ architecture where applications act as clients and communicate with the Maliit
+ server via toolkit-specific input context plugins.
+ .
+ A Qt 4 specific input context plugin. Turns Qt 4 applications into Maliit
+ clients that can communicate with maliit-server.
+
+Package: libmaliit0
+Section: libs
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: text input method extension library for Qt4 applications
+ Maliit provides a flexible and cross-platform input method framework for
+ mobile and embedded text input. It has a plugin-based client-server
+ architecture where applications act as clients and communicate with the Maliit
+ server via toolkit-specific input context plugins.
+ .
+ Extends the Qt4 input method API and allows applications to change key
+ appearance or input method orientation (landscape, portrait).
+
+Package: libmaliit0-dbg
+Section: debug
+Architecture: any
+Depends: libmaliit0 (= ${binary:Version}), ${misc:Depends}, ${shlibs:Depends}
+Description: text input method extension library for Qt4 applications - debug symbols
+ Maliit provides a flexible and cross-platform input method framework for
+ mobile and embedded text input. It has a plugin-based client-server
+ architecture where applications act as clients and communicate with the Maliit
+ server via toolkit-specific input context plugins.
+ .
+ This package contains debug symbols for libmaliit
+
+Package: libmaliit-dev
+Section: libdevel
+Architecture: any
+Depends: libmaliit0 (= ${binary:Version}),
+         libqt4-dev (>= 4.7),
+         maliit-framework-dev (= ${binary:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Description: text input method extension library - development files
+ Maliit provides a flexible and cross-platform input method framework for
+ mobile and embedded text input. It has a plugin-based client-server
+ architecture where applications act as clients and communicate with the Maliit
+ server via toolkit-specific input context plugins.
+ .
+ This package contains development headers for the extension library if
+ application developers want to achieve a better integration with Maliit.
+
+Package: libmaliit-glib0
+Section: libs
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: text input method extension library for GTK+ applications
+ Maliit provides a flexible and cross-platform input method framework for
+ mobile and embedded text input. It has a plugin-based client-server
+ architecture where applications act as clients and communicate with the Maliit
+ server via toolkit-specific input context plugins.
+ .
+ Extends the GTK+ input method API and allows applications to change key
+ appearance or input method orientation (landscape, portrait).
+
+Package: libmaliit-glib0-dbg
+Section: debug
+Architecture: any
+Depends: libmaliit-glib0 (= ${binary:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Description: text input method extension library for GTK+ applications - debug symbols
+ Maliit provides a flexible and cross-platform input method framework for
+ mobile and embedded text input. It has a plugin-based client-server
+ architecture where applications act as clients and communicate with the Maliit
+ server via toolkit-specific input context plugins.
+ .
+ This package contains debug symbols for libmaliit-glib0.
+
+Package: libmaliit-glib-dev
+Section: libdevel
+Architecture: any
+Depends: libglib2.0-dev,
+         libmaliit-glib0 (= ${binary:Version}),
+         gir1.2-maliit-1.0 (= ${binary:Version}),
+         maliit-framework-dev (= ${binary:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Description: text input method extension library for GTK+ apps - development files
+ Maliit provides a flexible and cross-platform input method framework for
+ mobile and embedded text input. It has a plugin-based client-server
+ architecture where applications act as clients and communicate with the Maliit
+ server via toolkit-specific input context plugins.
+ .
+ This package contains development headers for the extension library and is
+ required if GTK+ application developers want to achieve a better integration
+ with Maliit.
+ .
+ Can be used in combination with GObject introspection.
+
+Package: libmaliit-glib-doc
+Section: doc
+Architecture: all
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: text input method extension library for Gtk+ applications - documentation
+ Maliit provides a flexible and cross-platform input method framework for
+ mobile and embedded text input. It has a plugin-based client-server
+ architecture where applications act as clients and communicate with the Maliit
+ server via toolkit-specific input context plugins.
+ .
+ This package contains the devhelp reference documentation for libmaliit-glib0.
+
+Package: gir1.2-maliit-1.0
+Architecture: any
+Depends: ${gir:Depends}, ${misc:Depends}, ${shlibs:Depends}
+Description: text input method extension library for GTK+ applications - gir bindings
+ Maliit provides a flexible and cross-platform input method framework for
+ mobile and embedded text input. It has a plugin-based client-server
+ architecture where applications act as clients and communicate with the Maliit
+ server via toolkit-specific input context plugins.
+ .
+ This package can be used by other packages using the GIRepository format to
+ generate dynamic bindings for libmaliit-glib0.
+
+Package: maliit-framework-doc
+Section: doc
+Architecture: all
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: text input method framework - documentation
+ Maliit provides a flexible and cross-platform input method framework for
+ mobile and embedded text input. It has a plugin-based client-server
+ architecture where applications act as clients and communicate with the Maliit
+ server via toolkit-specific input context plugins.
+ .
+ This package contains documentation for text input method framework for
+ application developers.

@@ -1,0 +1,13 @@
+usr/include/maliit/connection
+usr/include/maliit/framework
+usr/include/maliit/plugins
+usr/include/maliit/plugins-quick
+usr/include/maliit/server
+usr/lib/pkgconfig/maliit-connection.pc
+usr/lib/pkgconfig/maliit-framework.pc
+usr/lib/pkgconfig/maliit-plugins-quick.pc
+usr/lib/pkgconfig/maliit-plugins.pc
+usr/lib/pkgconfig/maliit-server.pc
+usr/share/qt4/mkspecs/features/maliit-defines.prf
+usr/share/qt4/mkspecs/features/maliit-framework.prf
+usr/share/qt4/mkspecs/features/maliit-plugins.prf

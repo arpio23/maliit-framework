@@ -1,0 +1,71 @@
+maliit-framework (0.94.1-1) experimental; urgency=low
+
+  * Upload to Debian (Closes: #699428)
+  * New upstream release 0.94.1
+  * Use dh(1) in d/rules 
+  * Fix package names and rationalise packages
+  * Add watch file
+  * Run tests in package build under xvfb
+  * Integrate changes from Michał Zając.
+    - Rewrite / minimise copyright file
+    - Install xinput.d alternative
+
+ -- Iain Lane <iain.lane@canonical.com>  Thu, 31 Jan 2013 12:02:21 +0000
+
+maliit-framework (0.94.0-0ubuntu1~0openismus1) quantal; urgency=low
+
+  * New upstream release:
+  - Add Wayland input method support
+  - Auto-detect subviews based on system locale
+    - If no configuration exists, Maliit uses LANGUAGE to guess plugin's
+      subview(s).
+  - Don't write user configuration to disk for default values
+    - Only write *actual* user configuration that's different from factory
+      defaults.
+  - Remove version suffix from libraries and install directories
+    - Affects packaging & {header, .pc , .prf} install directories
+  - Adjust to Qt 5.0.0 API changes
+  - Add surface support for QtQuick2
+
+ -- Murray Cumming <murrayc@openismus.com>  Mon, 14 Jan 2013 10:52:01 +0100
+
+maliit-framework (0.93.1-0ubuntu1~openismus3) quantal; urgency=low
+
+  * control: Fixed typos.
+  Fixed a typo in a dependency name to fix the package build.
+  Fixed a typo in a version variable.
+
+ -- Murray Cumming <murrayc@openismus.com>  Fri, 04 Jan 2013 22:31:44 +0100
+
+maliit-framework (0.93.1-0ubuntu1~openismus2) quantal; urgency=low
+
+  * Fixed some lintian warnings.
+
+ -- Murray Cumming <murrayc@openismus.com>  Fri, 14 Dec 2012 12:56:47 +0100
+
+maliit-framework (0.93.1-0ubuntu1~openismus1) quantal; urgency=low
+
+  * New upstream release.
+
+ -- Murray Cumming <murrayc@openismus.com>  Fri, 14 Dec 2012 11:04:22 +0100
+
+maliit-framework (0.92.4-0ubuntu1~openismus1) quantal; urgency=low
+
+  * A manual build, so uupdate does not consider this to be a native debian package.
+  * Remove mention of usr/share/gconf/schemas/maliit-framework.schemas
+    which no longer exists, so that broke the install.
+
+ -- Murray Cumming <murrayc@openismus.com>  Fri, 14 Dec 2012 10:43:00 +0000
+
+maliit-framework (0.92.4~latest~r1548~pkg40~quantal1) quantal; urgency=low
+
+  * Auto build.
+
+ -- Launchpad Package Builder <noreply@launchpad.net>  Thu, 27 Sep 2012 20:13:56 +0000
+
+maliit-framework (0.81.0.1-0) unstable; urgency=low
+
+  * New release
+
+ -- Jon Nordby <jonn@openismus.com>  Tue, 06 Sep 2011 12:41:43 +0300
+

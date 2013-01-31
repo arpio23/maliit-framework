@@ -1,0 +1,7 @@
+debian/xinput/* etc/X11/xinit/xinput.d
+usr/bin/maliit-server
+usr/lib/libmaliit-connection.so*
+usr/lib/libmaliit-plugins-quick.so*
+usr/lib/libmaliit-plugins.so*
+usr/lib/maliit/plugins/factories/libmaliit-plugins-quick-factory.so
+usr/share/dbus-1/services/org.maliit.server.service
