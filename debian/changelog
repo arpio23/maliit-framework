@@ -1,3 +1,10 @@
+maliit-framework (0.94.1-2) experimental; urgency=medium
+
+  * Install typelib files into MA libdir.
+  * Update symbols file.
+
+ -- Iain Lane <iain@orangesquash.org.uk>  Thu, 25 Sep 2014 13:26:05 +0100
+
 maliit-framework (0.94.1-1) experimental; urgency=low
 
   * Upload to Debian (Closes: #699428)

@@ -212,6 +212,7 @@ Description: text input method extension library for Gtk+ applications - documen
 Package: gir1.2-maliit-1.0
 Architecture: any
 Depends: ${gir:Depends}, ${misc:Depends}, ${shlibs:Depends}
+Multi-Arch: same
 Description: text input method extension library for GTK+ applications - gir bindings
  Maliit provides a flexible and cross-platform input method framework for
  mobile and embedded text input. It has a plugin-based client-server

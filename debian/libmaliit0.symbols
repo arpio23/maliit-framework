@@ -1,4 +1,4 @@
-# SymbolsHelper-Confirmed: 0.94.1 amd64 powerpc
+# SymbolsHelper-Confirmed: 0.94.1-2 amd64
 libmaliit-settings.so.0 libmaliit0 #MINVER#
  _Z20validateSettingValueN6Maliit16SettingEntryTypeE4QMapI7QString8QVariantERKS3_@Base 0.94.1
  _ZN10QByteArrayD1Ev@Base 0.94.1
@@ -7,14 +7,10 @@ libmaliit-settings.so.0 libmaliit0 #MINVER#
  (optional=templinst|arch=powerpc)_ZN14QScopedPointerIN6Maliit20SettingsEntryPrivateE21QScopedPointerDeleterIS1_EED2Ev@Base 0.94.1
  (optional=templinst|arch=powerpc)_ZN14QScopedPointerIN6Maliit21PluginSettingsPrivateE21QScopedPointerDeleterIS1_EED1Ev@Base 0.94.1
  (optional=templinst|arch=powerpc)_ZN14QScopedPointerIN6Maliit21PluginSettingsPrivateE21QScopedPointerDeleterIS1_EED2Ev@Base 0.94.1
- (optional=templinst)_ZN14QScopedPointerIN6Maliit22SettingsManagerPrivateE21QScopedPointerDeleterIS1_EED1Ev@Base 0.94.1
- (optional=templinst)_ZN14QScopedPointerIN6Maliit22SettingsManagerPrivateE21QScopedPointerDeleterIS1_EED2Ev@Base 0.94.1
  (optional=templinst|arch=powerpc)_ZN14QSharedPointerIN6Maliit13SettingsEntryEED1Ev@Base 0.94.1
  (optional=templinst|arch=powerpc)_ZN14QSharedPointerIN6Maliit13SettingsEntryEED2Ev@Base 0.94.1
  (optional=templinst|arch=powerpc)_ZN14QSharedPointerIN6Maliit14PluginSettingsEED1Ev@Base 0.94.1
  (optional=templinst|arch=powerpc)_ZN14QSharedPointerIN6Maliit14PluginSettingsEED2Ev@Base 0.94.1
- (optional=templinst)_ZN14QSharedPointerIN6Maliit18AttributeExtensionEED1Ev@Base 0.94.1
- (optional=templinst)_ZN14QSharedPointerIN6Maliit18AttributeExtensionEED2Ev@Base 0.94.1
  (optional=templinst|arch=amd64)_ZN15QtSharedPointer16ExternalRefCountI19MImServerConnectionE5derefEPNS_20ExternalRefCountDataEPS1_@Base 0.94.1
  (optional=templinst|arch=amd64)_ZN15QtSharedPointer16ExternalRefCountIN6Maliit13SettingsEntryEE5derefEPNS_20ExternalRefCountDataEPS2_@Base 0.94.1
  (optional=templinst|arch=amd64)_ZN15QtSharedPointer16ExternalRefCountIN6Maliit14PluginSettingsEE5derefEPNS_20ExternalRefCountDataEPS2_@Base 0.94.1
@@ -25,13 +21,15 @@ libmaliit-settings.so.0 libmaliit0 #MINVER#
  _ZN15QtSharedPointer20ExternalRefCountDataD2Ev@Base 0.94.1
  _ZN21MImPluginSettingsInfoD1Ev@Base 0.94.1
  _ZN21MImPluginSettingsInfoD2Ev@Base 0.94.1
+ (optional=templinst)_ZN21QScopedPointerDeleterIN6Maliit20SettingsEntryPrivateEE7cleanupEPS1_@Base 0.94.1-2
+ (optional=templinst)_ZN21QScopedPointerDeleterIN6Maliit21PluginSettingsPrivateEE7cleanupEPS1_@Base 0.94.1-2
+ (optional=templinst)_ZN21QScopedPointerDeleterIN6Maliit22SettingsManagerPrivateEE7cleanupEPS1_@Base 0.94.1-2
  _ZN22MImPluginSettingsEntryD1Ev@Base 0.94.1
  _ZN22MImPluginSettingsEntryD2Ev@Base 0.94.1
  (optional=templinst)_ZN4QMapI7QString8QVariantE13detach_helperEv@Base 0.94.1
  (optional=templinst)_ZN4QMapI7QString8QVariantED1Ev@Base 0.94.1
  (optional=templinst)_ZN4QMapI7QString8QVariantED2Ev@Base 0.94.1
  (optional=templinst)_ZN5QHashIi14QSharedPointerIN6Maliit18AttributeExtensionEEE11deleteNode2EPN9QHashData4NodeE@Base 0.94.1
- (optional=templinst|arch=amd64)_ZN5QHashIi14QSharedPointerIN6Maliit18AttributeExtensionEEE13detach_helperEv@Base 0.94.1
  (optional=templinst)_ZN5QHashIi14QSharedPointerIN6Maliit18AttributeExtensionEEE13duplicateNodeEPN9QHashData4NodeEPv@Base 0.94.1
  (optional=templinst)_ZN5QListI14QSharedPointerIN6Maliit13SettingsEntryEEE13detach_helperEi@Base 0.94.1
  (optional=templinst)_ZN5QListI14QSharedPointerIN6Maliit13SettingsEntryEEE18detach_helper_growEii@Base 0.94.1
@@ -41,11 +39,9 @@ libmaliit-settings.so.0 libmaliit0 #MINVER#
  (optional=templinst)_ZN5QListI14QSharedPointerIN6Maliit14PluginSettingsEEED1Ev@Base 0.94.1
  (optional=templinst)_ZN5QListI14QSharedPointerIN6Maliit14PluginSettingsEEED2Ev@Base 0.94.1
  (optional=templinst)_ZN5QListI21MImPluginSettingsInfoE13detach_helperEi@Base 0.94.1
- (optional=templinst|arch=amd64)_ZN5QListI21MImPluginSettingsInfoE13detach_helperEv@Base 0.94.1
  (optional=templinst)_ZN5QListI21MImPluginSettingsInfoED1Ev@Base 0.94.1
  (optional=templinst)_ZN5QListI21MImPluginSettingsInfoED2Ev@Base 0.94.1
  (optional=templinst)_ZN5QListI22MImPluginSettingsEntryE13detach_helperEi@Base 0.94.1
- (optional=templinst|arch=amd64)_ZN5QListI22MImPluginSettingsEntryE13detach_helperEv@Base 0.94.1
  (optional=templinst)_ZN5QListI22MImPluginSettingsEntryED1Ev@Base 0.94.1
  (optional=templinst)_ZN5QListI22MImPluginSettingsEntryED2Ev@Base 0.94.1
  (optional=templinst)_ZN5QListI8QVariantE13detach_helperEi@Base 0.94.1
@@ -87,10 +83,6 @@ libmaliit-settings.so.0 libmaliit0 #MINVER#
  _ZN6Maliit15SettingsManagerD0Ev@Base 0.94.1
  _ZN6Maliit15SettingsManagerD1Ev@Base 0.94.1
  _ZN6Maliit15SettingsManagerD2Ev@Base 0.94.1
- (arch=amd64)_ZN6Maliit20SettingsEntryPrivateD1Ev@Base 0.94.1
- (arch=amd64)_ZN6Maliit20SettingsEntryPrivateD2Ev@Base 0.94.1
- (arch=amd64)_ZN6Maliit21PluginSettingsPrivateD1Ev@Base 0.94.1
- (arch=amd64)_ZN6Maliit21PluginSettingsPrivateD2Ev@Base 0.94.1
  _ZN6QDebugD1Ev@Base 0.94.1
  _ZN6QDebugD2Ev@Base 0.94.1
  _ZN7QStringD1Ev@Base 0.94.1
@@ -127,8 +119,6 @@ libmaliit.so.0 libmaliit0 #MINVER#
  _ZN10QByteArrayD2Ev@Base 0.94.1
  (optional=templinst|arch=amd64)_ZN12QWeakPointerIN6Maliit18AttributeExtensionEED1Ev@Base 0.94.1
  (optional=templinst|arch=amd64)_ZN12QWeakPointerIN6Maliit18AttributeExtensionEED2Ev@Base 0.94.1
- (optional=templinst)_ZN14QScopedPointerIN6Maliit25AttributeExtensionPrivateE21QScopedPointerDeleterIS1_EED1Ev@Base 0.94.1
- (optional=templinst)_ZN14QScopedPointerIN6Maliit25AttributeExtensionPrivateE21QScopedPointerDeleterIS1_EED2Ev@Base 0.94.1
  (optional=templinst|arch=powerpc)_ZN14QSharedPointerI19MImServerConnectionED1Ev@Base 0.94.1
  (optional=templinst|arch=powerpc)_ZN14QSharedPointerI19MImServerConnectionED2Ev@Base 0.94.1
  (optional=templinst|arch=amd64)_ZN15QtSharedPointer16ExternalRefCountI19MImServerConnectionE5derefEPNS_20ExternalRefCountDataEPS1_@Base 0.94.1
@@ -137,11 +127,11 @@ libmaliit.so.0 libmaliit0 #MINVER#
  _ZN15QtSharedPointer20ExternalRefCountDataD0Ev@Base 0.94.1
  _ZN15QtSharedPointer20ExternalRefCountDataD1Ev@Base 0.94.1
  _ZN15QtSharedPointer20ExternalRefCountDataD2Ev@Base 0.94.1
+ (optional=templinst)_ZN21QScopedPointerDeleterIN6Maliit25AttributeExtensionPrivateEE7cleanupEPS1_@Base 0.94.1-2
  (optional=templinst)_ZN4QMapI7QString8QVariantE13detach_helperEv@Base 0.94.1
  (optional=templinst)_ZN4QMapI7QString8QVariantED1Ev@Base 0.94.1
  (optional=templinst)_ZN4QMapI7QString8QVariantED2Ev@Base 0.94.1
  (optional=templinst)_ZN5QListI12QWeakPointerIN6Maliit18AttributeExtensionEEE13detach_helperEi@Base 0.94.1
- (optional=templinst|arch=amd64)_ZN5QListI12QWeakPointerIN6Maliit18AttributeExtensionEEE13detach_helperEv@Base 0.94.1
  (optional=templinst)_ZN5QListI12QWeakPointerIN6Maliit18AttributeExtensionEEE18detach_helper_growEii@Base 0.94.1
  (optional=templinst)_ZN5QListI12QWeakPointerIN6Maliit18AttributeExtensionEEE6appendERKS3_@Base 0.94.1
  (optional=templinst)_ZN5QListI12QWeakPointerIN6Maliit18AttributeExtensionEEE9removeAllERKS3_@Base 0.94.1
