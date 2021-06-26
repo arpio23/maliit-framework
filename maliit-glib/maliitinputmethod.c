@@ -22,8 +22,7 @@
 
 #include "maliitinputmethod.h"
 #include "maliitmarshallers.h"
-
-#include "meego-im-connector.h"
+#include "maliitbus.h"
 
 /**
  * SECTION:maliitinputmethod
@@ -41,7 +40,7 @@ struct _MaliitInputMethodPrivate
 {
     int area[4];
 
-    MeegoIMProxy *maliit_proxy;
+    MaliitServer *maliit_proxy;
 };
 
 G_DEFINE_TYPE (MaliitInputMethod, maliit_input_method, G_TYPE_OBJECT)
@@ -64,10 +63,19 @@ maliit_input_method_finalize (GObject *object)
 static void
 maliit_input_method_dispose (GObject *object)
 {
+    GError *error = NULL;
     MaliitInputMethod *input_method = MALIIT_INPUT_METHOD (object);
     MaliitInputMethodPrivate *priv = input_method->priv;
+    MaliitContext *context = maliit_get_context_sync (NULL, &error);
 
-    priv->maliit_proxy = NULL;
+    if (context) {
+        g_signal_handlers_disconnect_by_data (context, input_method);
+    } else {
+        g_warning ("Unable to connect to context: %s", error->message);
+        g_clear_error (&error);
+    }
+
+    g_clear_object (&priv->maliit_proxy);
 
     G_OBJECT_CLASS (maliit_input_method_parent_class)->dispose (object);
 }
@@ -110,8 +118,9 @@ maliit_input_method_class_init (MaliitInputMethodClass *input_method_class)
     g_type_class_add_private (input_method_class, sizeof (MaliitInputMethodPrivate));
 }
 
-static void
+static gboolean
 update_input_method_area(MaliitInputMethod *input_method,
+                         GDBusMethodInvocation *invocation G_GNUC_UNUSED,
                          int x, int y, int width, int height,
                          gpointer user_data G_GNUC_UNUSED)
 {
@@ -121,6 +130,8 @@ update_input_method_area(MaliitInputMethod *input_method,
     input_method->priv->area[3] = height;
 
     g_signal_emit(input_method, signals[AREA_CHANGED], 0, x, y, width, height);
+
+    return FALSE;
 }
 
 static void
@@ -129,17 +140,34 @@ maliit_input_method_init (MaliitInputMethod *input_method)
     MaliitInputMethodPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (input_method,
                                                                   MALIIT_TYPE_INPUT_METHOD,
                                                                   MaliitInputMethodPrivate);
-    MeegoImConnector *connection = meego_im_connector_get_singleton();
+    MaliitContext *context;
+    GError *error = NULL;
 
     priv->area[0] = priv->area[1] = 0;
     priv->area[2] = priv->area[3] = 0;
 
-    priv->maliit_proxy = connection->proxy;
+    priv->maliit_proxy = maliit_get_server_sync (NULL, &error);
+
+    if (priv->maliit_proxy) {
+        g_object_ref (priv->maliit_proxy);
+    } else {
+        g_warning ("Unable to connect to server: %s", error->message);
+        g_clear_error (&error);
+    }
 
     input_method->priv = priv;
 
-    g_signal_connect_swapped(connection->dbusobj, "update-input-method-area",
-                             G_CALLBACK(update_input_method_area), input_method);
+    context = maliit_get_context_sync (NULL, &error);
+
+    if (context) {
+        g_signal_connect_swapped (context,
+                                  "handle-update-input-method-area",
+                                  G_CALLBACK (update_input_method_area),
+                                  input_method);
+    } else {
+        g_warning ("Unable to connect to context: %s", error->message);
+        g_clear_error (&error);
+    }
 }
 
 /**
@@ -192,10 +220,24 @@ maliit_input_method_get_area (MaliitInputMethod *input_method,
 void
 maliit_input_method_show (MaliitInputMethod *input_method)
 {
-    g_return_if_fail (MALIIT_IS_INPUT_METHOD (input_method));
+    GError *error = NULL;
 
-    meego_im_proxy_activate_context(input_method->priv->maliit_proxy);
-    meego_im_proxy_show_input_method (input_method->priv->maliit_proxy);
+    g_return_if_fail (MALIIT_IS_INPUT_METHOD (input_method));
+    g_return_if_fail (input_method->priv->maliit_proxy);
+
+    if (!maliit_server_call_activate_context_sync (input_method->priv->maliit_proxy,
+                                                   NULL,
+                                                   &error)) {
+        g_warning ("Unable to activate context: %s", error->message);
+        g_clear_error (&error);
+    }
+
+    if (!maliit_server_call_show_input_method_sync (input_method->priv->maliit_proxy,
+                                                    NULL,
+                                                    &error)) {
+        g_warning ("Unable to show input method: %s", error->message);
+        g_clear_error (&error);
+    }
 }
 
 /**
@@ -207,8 +249,22 @@ maliit_input_method_show (MaliitInputMethod *input_method)
 void
 maliit_input_method_hide (MaliitInputMethod *input_method)
 {
-    g_return_if_fail (MALIIT_IS_INPUT_METHOD (input_method));
+    GError *error = NULL;
 
-    meego_im_proxy_activate_context(input_method->priv->maliit_proxy);
-    meego_im_proxy_hide_input_method (input_method->priv->maliit_proxy);
+    g_return_if_fail (MALIIT_IS_INPUT_METHOD (input_method));
+    g_return_if_fail (input_method->priv->maliit_proxy);
+
+    if (!maliit_server_call_activate_context_sync (input_method->priv->maliit_proxy,
+                                                   NULL,
+                                                   &error)) {
+        g_warning ("Unable to activate context: %s", error->message);
+        g_clear_error (&error);
+    }
+
+    if (!maliit_server_call_hide_input_method_sync (input_method->priv->maliit_proxy,
+                                                    NULL,
+                                                    &error)) {
+        g_warning ("Unable to hide input method: %s", error->message);
+        g_clear_error (&error);
+    }
 }

@@ -19,12 +19,19 @@
 
 class MInputContextConnection;
 class MIMPluginManager;
-class MIndicatorServiceClient;
 class MAbstractInputMethod;
 
-class QRegion;
+namespace Maliit
+{
 
-using Maliit::Plugins::AbstractSurfaceFactory;
+class WindowGroup;
+
+} // namespace Maliit
+
+QT_BEGIN_NAMESPACE
+class QRegion;
+QT_END_NAMESPACE
+
 using Maliit::Plugins::AbstractPluginSetting;
 
 /*! \internal
@@ -37,8 +44,9 @@ class MInputMethodHost: public MAbstractInputMethodHost
 
 public:
     MInputMethodHost(const QSharedPointer<MInputContextConnection>& inputContextConnection,
-                     MIMPluginManager *pluginManager, MIndicatorServiceClient &indicatorService,
-                     AbstractSurfaceFactory *surfaceFactory, const QString &plugin, const QString &description);
+                     MIMPluginManager *pluginManager,
+                     const QSharedPointer<Maliit::WindowGroup> &window_group, const QString &plugin,
+                     const QString &description);
     virtual ~MInputMethodHost();
 
     //! if enabled, the plugin associated with this host are allowed to communicate
@@ -61,6 +69,8 @@ public:
     virtual int anchorPosition(bool &valid);
     virtual bool hiddenText(bool &valid);
     virtual QString selection(bool &valid);
+    virtual void registerWindow (QWindow *window,
+                                 Maliit::Position position);
     virtual void sendPreeditString(const QString &string,
                                    const QList<Maliit::PreeditTextFormat> &preeditFormats,
                                    int replacementStart = 0, int replacementLength = 0,
@@ -77,12 +87,10 @@ public:
     virtual void setDetectableAutoRepeat(bool enabled);
     virtual void setGlobalCorrectionEnabled(bool enabled);
 
-    virtual void setInputModeIndicator(Maliit::InputModeIndicator mode);
-
     virtual void switchPlugin(Maliit::SwitchDirection direction);
     virtual void switchPlugin(const QString &pluginName);
-    virtual void setScreenRegion(const QRegion &region);
-    virtual void setInputMethodArea(const QRegion &region);
+    virtual void setScreenRegion(const QRegion &region, QWindow *window = 0);
+    virtual void setInputMethodArea(const QRegion &region, QWindow *window = 0);
     virtual void setSelection(int start, int length);
     virtual QList<MImPluginDescription> pluginDescriptions(Maliit::HandlerState state) const;
     virtual int preeditClickPos(bool &valid) const;
@@ -91,12 +99,12 @@ public:
 
     //! Only empty implementation provided.
     virtual void setOrientationAngleLocked(bool lock);
-    virtual AbstractSurfaceFactory *surfaceFactory();
     virtual AbstractPluginSetting *registerPluginSetting(const QString &key,
                                                          const QString &description,
                                                          Maliit::SettingEntryType type,
                                                          const QVariantMap &attributes);
     // \reimp_end
+    QVariant inputMethodQuery(Qt::InputMethodQuery query, const QVariant &argument) const override;
 
 private:
     Q_DISABLE_COPY(MInputMethodHost)
@@ -105,10 +113,9 @@ private:
     MIMPluginManager *pluginManager;
     MAbstractInputMethod *inputMethod;
     bool enabled;
-    MIndicatorServiceClient &indicatorService;
-    AbstractSurfaceFactory *mSurfaceFactory;
     QString pluginId;
     QString pluginDescription;
+    QSharedPointer<Maliit::WindowGroup> mWindowGroup;
 };
 
 //! \internal_end

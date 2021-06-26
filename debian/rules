@@ -1,50 +1,10 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
-# Uncomment this to turn on verbose mode.
-export DH_VERBOSE=1
 
-# Build options
-QMAKE_OPTIONS = \
-	M_IM_PREFIX=/usr \
-	MALIIT_SERVER_ARGUMENTS="-software -bypass-wm-hint" \
-	CONFIG+=disable-gtk-cache-update \
-	CONFIG+=enable-dbus-activation
-
-override_dh_auto_configure:
-	dh_auto_configure -- -r $(QMAKE_OPTIONS)
-
-override_dh_auto_clean:
-	dh_auto_clean
-	rm -rf lib/* .obj
-	rm -f connection/*glue.h connection-glib/*glue.h maliit-glib/html.stamp
-
-override_dh_auto_install:
-	GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1 dh_auto_install
-
-override_dh_auto_test:
-ifeq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
-	make -C tests
-	xvfb-run make check
-endif
-
-override_dh_install:
-	dh_install --list-missing --fail-missing -Xexample -Xtests
-	dh_gtkmodules -p maliit-inputcontext-gtk2
-	dh_gtkmodules -p maliit-inputcontext-gtk3
-
-override_dh_makeshlibs:
-	dh_makeshlibs -- -c4
-
-override_dh_strip:
-	dh_strip -pmaliit-framework \
-		--dbg-package=maliit-framework-dbg
-	dh_strip -plibmaliit0 \
-		--dbg-package=libmaliit0-dbg
-	dh_strip -plibmaliit-glib0 \
-		--dbg-package=libmaliit-glib0-dbg
-	dh_strip
+export DEB_LDFLAGS_MAINT_APPEND := -Wl,--as-needed
 
 %:
 	dh $@
 
-.PHONY: override_dh_auto_configure override_dh_auto_clean override_dh_auto_install override_dh_auto_test override_dh_install override_dh_makeshlibs override_dh_strip
+override_dh_auto_test:
+	true

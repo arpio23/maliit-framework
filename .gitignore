@@ -16,6 +16,7 @@ gen_*
 *.gcov
 *.gcda
 *.gcno
-/meego-im-framework.schemas
 *.tar.*
 *.md5
+.idea
+build

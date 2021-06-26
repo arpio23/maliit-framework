@@ -1,6 +1,6 @@
 /* This file is part of Maliit framework
  *
- * Copyright (C) 2012 Openismus GmbH
+ * Copyright (C) 2012 Canonical Ltd
  *
  * Contact: maliit-discuss@lists.maliit.org
  *
@@ -21,6 +21,8 @@
  */
 #include <maliit-glib/maliitsettingsmanager.h>
 #include <maliit-glib/maliitsettingsentry.h>
+
+#include "../../maliit-glib/maliitbusprivate.h"
 
 #include "mockmaliitserver.h"
 
@@ -98,25 +100,10 @@ test_preferred_description_locale_set_get_roundtrip(void)
     g_assert_cmpstr(actual, ==, expected);
 }
 
-typedef struct {
-    gboolean received;
-    GList *settings;
-} OnPluginSettingsreceivedState;
-
 void
 add_gobject_ref_gfunc(gpointer data, gpointer user_data G_GNUC_UNUSED)
 {
     g_object_ref(data);
-}
-
-void
-on_plugin_settings_received(MaliitSettingsManager *manager G_GNUC_UNUSED,
-                            GList *settings, gpointer user_data)
-{
-    OnPluginSettingsreceivedState *state = (OnPluginSettingsreceivedState *)user_data;
-    state->received = TRUE;
-    state->settings = g_list_copy(settings);
-    g_list_foreach(settings, add_gobject_ref_gfunc, NULL);
 }
 
 /**
@@ -126,20 +113,19 @@ on_plugin_settings_received(MaliitSettingsManager *manager G_GNUC_UNUSED,
 void
 test_load_plugins_settings_returns_settings(void)
 {
-    MockMaliitServer *server = mock_maliit_server_new();
-    MaliitSettingsManager *manager = maliit_settings_manager_new();
-    OnPluginSettingsreceivedState state = {FALSE, NULL};
-    server->settings = g_ptr_array_new();
+    MockMaliitServer *server;
+    MaliitSettingsManager *manager;
 
-    g_signal_connect(manager, "plugin-settings-received",
-                     G_CALLBACK(on_plugin_settings_received), &state);
+    server = mock_maliit_server_new();
+    server->settings = g_variant_new_parsed("@a(sssia(ssibva{sv})) [('a', 'b', 'c', 42, [])]");
+    maliit_set_bus(mock_maliit_server_get_bus(server));
+
+    manager = maliit_settings_manager_new();
     maliit_settings_manager_load_plugin_settings(manager);
     g_assert(server->load_plugin_settings_called);
-    g_assert(state.received);
-    g_assert_cmpint(g_list_length(state.settings), ==, 0);
 
-    g_list_free_full(state.settings, g_object_unref);
     g_object_unref(manager);
+    maliit_set_bus(NULL);
     mock_maliit_server_free(server);
 }
 
@@ -149,40 +135,6 @@ on_signal_received(gpointer instance G_GNUC_UNUSED, gpointer user_data)
 {
     gboolean *received = (gboolean *)user_data;
     *received = TRUE;
-}
-
-/** Test that when the server is connected, MaliitSettingsManager::connected is emitted */
-void
-test_settings_manager_emits_connected(void)
-{
-    MockMaliitServer *server = mock_maliit_server_new();
-    MaliitSettingsManager *manager = maliit_settings_manager_new();
-    gboolean connected_received = FALSE;
-
-    g_signal_connect(manager, "connected",
-                     G_CALLBACK(on_signal_received), &connected_received);
-    mock_maliit_server_emulate_connect(server);
-    g_assert(connected_received);
-
-    g_object_unref(manager);
-    mock_maliit_server_free(server);
-}
-
-/** Test that when the server is disconnected, MaliitSettingsManager::disconnected is emitted */
-void
-test_settings_manager_emits_disconnected(void)
-{
-    MockMaliitServer *server = mock_maliit_server_new();
-    MaliitSettingsManager *manager = maliit_settings_manager_new();
-    gboolean disconnected_received = FALSE;
-
-    g_signal_connect(manager, "disconnected",
-                     G_CALLBACK(on_signal_received), &disconnected_received);
-    mock_maliit_server_emulate_disconnect(server);
-    g_assert(disconnected_received);
-
-    g_object_unref(manager);
-    mock_maliit_server_free(server);
 }
 
 int
@@ -198,10 +150,6 @@ main (int argc, char **argv) {
                     test_preferred_description_locale_set_get_roundtrip);
     g_test_add_func("/ut_maliit_glib_settings/MaliitSettingsManager/load_plugin_settings/returns-settings",
                     test_load_plugins_settings_returns_settings);
-    g_test_add_func("/ut_maliit_glib_settings/MaliitSettingsManager/emits-connected",
-                    test_settings_manager_emits_connected);
-    g_test_add_func("/ut_maliit_glib_settings/MaliitSettingsManager/emits-disconnected",
-                    test_settings_manager_emits_disconnected);
 
     return g_test_run();
 }

@@ -5,7 +5,7 @@
  *
  * Contact: maliit-discuss@lists.maliit.org
  *
- * Copyright (C) 2012 Openismus GmbH
+ * Copyright (C) 2012 Canonical Ltd
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,6 @@
 #include "mimpluginmanager.h"
 #include "mimpluginmanager_p.h"
 #include <maliit/plugins/inputmethodplugin.h>
-#include <maliit/plugins/abstractpluginfactory.h>
 #include "mattributeextensionmanager.h"
 #include "msharedattributeextensionmanager.h"
 #include <maliit/plugins/abstractinputmethod.h>
@@ -27,14 +26,14 @@
 #include "mimsubviewoverride.h"
 #include "maliit/namespaceinternal.h"
 #include <maliit/settingdata.h>
+#include "windowgroup.h"
+
+#include <quick/inputmethodquickplugin.h>
 
 #include <QDir>
 #include <QPluginLoader>
 #include <QSignalMapper>
-#include <QGraphicsLinearLayout>
-#include <QStandardItemModel>
 #include <QWeakPointer>
-#include <QWidget>
 
 #include <QDebug>
 #include <deque>
@@ -42,7 +41,6 @@
 namespace
 {
     const QString DefaultPluginLocation(MALIIT_PLUGINS_DIR);
-    const QString DefaultFactoryPluginLocation(MALIIT_FACTORY_PLUGINS_DIR);
 
     const char * const VisualizationAttribute = "visualizationPriority";
     const char * const FocusStateAttribute = "focusState";
@@ -50,48 +48,31 @@ namespace
     const QString ConfigRoot           = MALIIT_CONFIG_ROOT;
     const QString MImPluginPaths       = ConfigRoot + "paths";
     const QString MImPluginDisabled    = ConfigRoot + "disabledpluginfiles";
-    const QString MImPluginFactories   = ConfigRoot + "factories";
 
     const QString PluginRoot           = MALIIT_CONFIG_ROOT"plugins";
     const QString PluginSettings       = MALIIT_CONFIG_ROOT"pluginsettings";
     const QString MImAccesoryEnabled   = MALIIT_CONFIG_ROOT"accessoryenabled";
 
-    const int MaxPluginHideTransitionTime(2*1000);
-
     const char * const InputMethodItem = "inputMethod";
     const char * const LoadAll = "loadAll";
-
-    // this function is used to detect the file suffix used to associate with specific factory
-    static QString getFileMimeType(const QString& fileName)
-    {
-        QFileInfo fi(fileName);
-        return fi.suffix();
-    }
 }
 
 MIMPluginManagerPrivate::MIMPluginManagerPrivate(const QSharedPointer<MInputContextConnection> &connection,
-                                                 const QSharedPointer<AbstractSurfaceGroupFactory> &surfaceGroupFactory,
+                                                 const QSharedPointer<Maliit::AbstractPlatform> &platform,
                                                  MIMPluginManager *p)
     : parent(p),
       mICConnection(connection),
       imAccessoryEnabledConf(0),
       q_ptr(0),
-      acceptRegionUpdates(false),
       visible(false),
-      indicatorService(),
       onScreenPlugins(),
-      mSurfaceGroupFactory(surfaceGroupFactory),
       lastOrientation(0),
       attributeExtensionManager(new MAttributeExtensionManager),
-      sharedAttributeExtensionManager(new MSharedAttributeExtensionManager)
+      sharedAttributeExtensionManager(new MSharedAttributeExtensionManager),
+      m_platform(platform)
 {
     inputSourceToNameMap[Maliit::Hardware] = "hardware";
     inputSourceToNameMap[Maliit::Accessory] = "accessory";
-
-    ensureEmptyRegionWhenHiddenTimer.setSingleShot(true);
-    ensureEmptyRegionWhenHiddenTimer.setInterval(MaxPluginHideTransitionTime);
-    QObject::connect(&ensureEmptyRegionWhenHiddenTimer, SIGNAL(timeout()),
-                     parent, SLOT(_q_ensureEmptyRegionWhenHidden()));
 }
 
 
@@ -100,61 +81,11 @@ MIMPluginManagerPrivate::~MIMPluginManagerPrivate()
     qDeleteAll(handlerToPluginConfs);
 }
 
-void MIMPluginManagerPrivate::autoDetectEnabledSubViews(const QString &plugin)
-{
-    QList<MImOnScreenPlugins::SubView> to_enable;
-
-    // Try to auto-detect subviews for the selected plugin by looking for
-    // subviews that coincide with the languages selected for use on the
-    // system.
-    // FIXME: This works for the keyboard plugin, but won't work everywhere.
-    // The methodology for auto-configuring subviews should be somehow
-    // plugin-dictated.
-    QStringList langs = QLocale::system().uiLanguages();
-    Q_FOREACH (QString lang, langs) {
-        // Convert to lower case, remove any .utf8 suffix, and use _ as
-        // the separator between language and country.
-        lang = lang.split('.')[0].toLower().replace("-", "_");
-
-        MImOnScreenPlugins::SubView subView(plugin, lang);
-
-        // First try the language code as-is
-        if (onScreenPlugins.isSubViewAvailable(subView) && !to_enable.contains(subView)) {
-            to_enable << subView;
-            continue;
-        }
-
-        // See if we get a match if we expand "de" to "de_de"
-        if (!lang.contains('_')) {
-            subView.id = lang + "_" + lang;
-            if (onScreenPlugins.isSubViewAvailable(subView) && !to_enable.contains(subView)) {
-                to_enable << subView;
-            }
-            continue;
-        }
-
-        // See if we get a match if we trim "de_at" to "de"
-        subView.id = lang.split("_").first();
-        if (onScreenPlugins.isSubViewAvailable(subView) && !to_enable.contains(subView)) {
-            to_enable << subView;
-        }
-    }
-
-    if (!to_enable.isEmpty()) {
-        onScreenPlugins.setAutoEnabledSubViews(to_enable);
-    }
-}
-
 void MIMPluginManagerPrivate::loadPlugins()
 {
     Q_Q(MIMPluginManager);
 
     MImOnScreenPlugins::SubView activeSubView = onScreenPlugins.activeSubView();
-
-    //load factories
-    const QDir &dir(DefaultFactoryPluginLocation);
-    Q_FOREACH (QString factoryName, dir.entryList(QDir::Files))
-        loadFactoryPlugin(dir, factoryName);
 
     // Load active plugin first
     Q_FOREACH (QString path, paths) {
@@ -178,67 +109,14 @@ void MIMPluginManagerPrivate::loadPlugins()
     } // end Q_FOREACH path in paths
 
     if (plugins.empty()) {
-        qFatal("No plugins were found.");
+        qWarning("No plugins were found. Stopping.");
+        std::exit(0);
     }
 
     const QList<MImOnScreenPlugins::SubView> &availableSubViews = availablePluginsAndSubViews();
     onScreenPlugins.updateAvailableSubViews(availableSubViews);
 
-    // If no subviews are enabled by the configuration, try to auto-detect
-    // them.
-    if (onScreenPlugins.enabledSubViews().empty()) {
-        autoDetectEnabledSubViews(activeSubView.plugin);
-    }
-
-    // If we still don't have an enabled subview, enable the first available
-    // one.
-    if (onScreenPlugins.enabledSubViews().empty()) {
-        MImOnScreenPlugins::SubView subView = availableSubViews.first();
-        onScreenPlugins.setAutoEnabledSubViews(QList<MImOnScreenPlugins::SubView>() << subView);
-    }
-
-    // If we have an active subview in the configuration, check that it is
-    // enabled. If it's not, drop the active subview.
-    if (!activeSubView.id.isEmpty() && !onScreenPlugins.isSubViewEnabled(activeSubView)) {
-        activeSubView.id = "";
-    }
-
-    // If we don't have an active subview, auto-activate the first enabled
-    // one.
-    if (activeSubView.id.isEmpty()) {
-        MImOnScreenPlugins::SubView subView = onScreenPlugins.enabledSubViews().first();
-        onScreenPlugins.setAutoActiveSubView(subView);
-    }
-
     Q_EMIT q->pluginsChanged();
-}
-
-bool MIMPluginManagerPrivate::loadFactoryPlugin(const QDir &dir, const QString &fileName)
-{
-    if (blacklist.contains(fileName)) {
-        qWarning() << __PRETTY_FUNCTION__ << fileName << "is on the blacklist, skipped.";
-        return false;
-    }
-
-    // TODO: skip already loaded plugin ids (fileName)
-    QPluginLoader load(dir.absoluteFilePath(fileName));
-
-    QObject *pluginInstance = load.instance();
-    if (!pluginInstance) {
-        qWarning() << __PRETTY_FUNCTION__
-                   << "Error loading factory plugin from" << dir.absoluteFilePath(fileName) << load.errorString();
-        return false;
-    }
-
-    // check if the plugin is a factory
-    MImAbstractPluginFactory *factory = qobject_cast<MImAbstractPluginFactory *>(pluginInstance);
-    if (!factory) {
-        qWarning() << __PRETTY_FUNCTION__
-                   << "Could not cast" << pluginInstance->metaObject()->className() << "into MImAbstractPluginFactory.";
-        return false;
-    }
-    factories.insert(factory->fileExtension(), factory);
-    return true;
 }
 
 bool MIMPluginManagerPrivate::loadPlugin(const QDir &dir, const QString &fileName)
@@ -252,12 +130,8 @@ bool MIMPluginManagerPrivate::loadPlugin(const QDir &dir, const QString &fileNam
 
     Maliit::Plugins::InputMethodPlugin *plugin = 0;
 
-    QSharedPointer<AbstractSurfaceGroup> surfaceGroup(mSurfaceGroupFactory->createSurfaceGroup());
-
-    // Check if we have a specific factory for this plugin
-    QString mimeType = getFileMimeType(fileName);
-    if (factories.contains(mimeType)) {
-        plugin = factories[mimeType]->create(dir.filePath(fileName));
+    if (QFileInfo(fileName).suffix() == "qml") {
+        plugin = new Maliit::InputMethodQuickPlugin(dir.filePath(fileName), m_platform);
         if (!plugin) {
             qWarning() << __PRETTY_FUNCTION__
                        << "Could not create a plugin for: " << fileName;
@@ -287,7 +161,8 @@ bool MIMPluginManagerPrivate::loadPlugin(const QDir &dir, const QString &fileNam
         return false;
     }
 
-    MInputMethodHost *host = new MInputMethodHost(mICConnection, q, indicatorService, surfaceGroup->factory(),
+    QSharedPointer<Maliit::WindowGroup> windowGroup(new Maliit::WindowGroup(m_platform));
+    MInputMethodHost *host = new MInputMethodHost(mICConnection, q, windowGroup,
                                                   fileName, plugin->name());
 
     MAbstractInputMethod *im = plugin->createInputMethod(host);
@@ -303,10 +178,10 @@ bool MIMPluginManagerPrivate::loadPlugin(const QDir &dir, const QString &fileNam
     }
 
     PluginDescription desc = { im, host, PluginState(),
-                               Maliit::SwitchUndefined, fileName, surfaceGroup };
+                               Maliit::SwitchUndefined, fileName, windowGroup };
 
     // Connect surface group signals
-    QObject::connect(surfaceGroup.data(), SIGNAL(inputMethodAreaChanged(QRegion)),
+    QObject::connect(windowGroup.data(), SIGNAL(inputMethodAreaChanged(QRegion)),
                      mICConnection.data(), SLOT(updateInputMethodArea(QRegion)));
 
     plugins.insert(plugin, desc);
@@ -468,7 +343,12 @@ void MIMPluginManagerPrivate::setActiveHandlers(const QSet<Maliit::HandlerState>
 
     // notify plugins about new states
     Q_FOREACH (Maliit::Plugins::InputMethodPlugin *plugin, activatedPlugins) {
-        plugins.value(plugin).inputMethod->setState(plugins.value(plugin).state);
+        PluginDescription desc = plugins.value(plugin);
+        desc.inputMethod->setState(desc.state);
+        if (visible) {
+            desc.windowGroup->activate();
+            desc.inputMethod->show();
+        }
     }
 
     // deactivate unnecessary plugins
@@ -1092,23 +972,9 @@ void MIMPluginManagerPrivate::_q_setActiveSubView(const QString &subViewId,
     }
 }
 
-
-void MIMPluginManagerPrivate::_q_ensureEmptyRegionWhenHidden()
-{
-    Q_Q(MIMPluginManager);
-    // Do not accept region updates from hidden plugins. Emit an empty region
-    // update, because we cannot trust that a plugin sends a region update
-    // after it's hidden.
-    acceptRegionUpdates = false;
-    Q_EMIT q->regionUpdated(QRegion());
-}
-
 void MIMPluginManagerPrivate::showActivePlugins()
 {
-    ensureEmptyRegionWhenHiddenTimer.stop();
-    acceptRegionUpdates = true;
     visible = true;
-
     ensureActivePluginsVisible(ShowInputMethod);
 }
 
@@ -1117,10 +983,8 @@ void MIMPluginManagerPrivate::hideActivePlugins()
     visible = false;
     Q_FOREACH (Maliit::Plugins::InputMethodPlugin *plugin, activePlugins) {
         plugins.value(plugin).inputMethod->hide();
-        plugins.value(plugin).surfaceGroup->deactivate();
+        plugins.value(plugin).windowGroup->deactivate(Maliit::WindowGroup::HideDelayed);
     }
-
-    ensureEmptyRegionWhenHiddenTimer.start();
 }
 
 void MIMPluginManagerPrivate::ensureActivePluginsVisible(ShowInputMethodRequest request)
@@ -1129,12 +993,12 @@ void MIMPluginManagerPrivate::ensureActivePluginsVisible(ShowInputMethodRequest 
 
     for (; iterator != plugins.end(); ++iterator) {
         if (activePlugins.contains(iterator.key())) {
-            iterator.value().surfaceGroup->activate();
+            iterator.value().windowGroup->activate();
             if (request == ShowInputMethod) {
                 iterator.value().inputMethod->show();
             }
         } else {
-            iterator.value().surfaceGroup->deactivate();
+            iterator.value().windowGroup->deactivate(Maliit::WindowGroup::HideImmediate);
         }
     }
 }
@@ -1231,9 +1095,9 @@ void MIMPluginManagerPrivate::setActivePlugin(const QString &pluginId,
 // actual class
 
 MIMPluginManager::MIMPluginManager(const QSharedPointer<MInputContextConnection>& icConnection,
-                                   const QSharedPointer<AbstractSurfaceGroupFactory>& surfacesFactory)
+                                   const QSharedPointer<Maliit::AbstractPlatform> &platform)
     : QObject(),
-      d_ptr(new MIMPluginManagerPrivate(icConnection, surfacesFactory, this))
+      d_ptr(new MIMPluginManagerPrivate(icConnection, platform, this))
 {
     Q_D(MIMPluginManager);
     d->q_ptr = this;
@@ -1311,6 +1175,9 @@ MIMPluginManager::MIMPluginManager(const QSharedPointer<MInputContextConnection>
 
     connect(d->mICConnection.data(), SIGNAL(pluginSettingsRequested(int,QString)),
             this, SLOT(pluginSettingsRequested(int,QString)));
+
+    connect(d->mICConnection.data(), SIGNAL(focusChanged(WId)),
+            this, SLOT(handleAppFocusChanged(WId)));
 
     // Connect from MAttributeExtensionManager to our handlers
     connect(d->attributeExtensionManager.data(), SIGNAL(attributeExtensionIdChanged(const MAttributeExtensionId &)),
@@ -1459,20 +1326,6 @@ void MIMPluginManager::setAllSubViewsEnabled(bool enable)
     d->onScreenPlugins.setAllSubViewsEnabled(enable);
 }
 
-void MIMPluginManager::updateRegion(const QRegion &region)
-{
-    Q_D(MIMPluginManager);
-
-    // Record input method object's region.
-    d->activeImRegion = region;
-
-    // Don't update region when no region updates from the plugin side are
-    // expected.
-    if (d->acceptRegionUpdates) {
-        Q_EMIT regionUpdated(region);
-    }
-}
-
 void MIMPluginManager::setToolbar(const MAttributeExtensionId &id)
 {
     Q_D(MIMPluginManager);
@@ -1576,6 +1429,17 @@ void MIMPluginManager::handleAppOrientationChanged(int angle)
     }
 }
 
+void MIMPluginManager::handleAppFocusChanged(WId id)
+{
+    Q_D(MIMPluginManager);
+
+    MIMPluginManagerPrivate::Plugins::iterator i = d->plugins.begin();
+    while (i != d->plugins.end()) {
+        i.value().windowGroup.data()->setApplicationWindow(id);
+        ++i;
+    }
+}
+
 void MIMPluginManager::handleClientChange()
 {
     // notify plugins
@@ -1634,7 +1498,7 @@ void MIMPluginManager::handleWidgetStateChanged(unsigned int clientId,
         }
     }
 
-    const Qt::InputMethodHints lastHints = static_cast<Qt::InputMethodHints>(newState.value(Maliit::Internal::inputMethodHints).toLongLong());
+    const Qt::InputMethodHints lastHints = static_cast<Qt::InputMethodHints>(newState.value(Maliit::Internal::inputMethodHints).toInt());
     MImUpdateEvent ev(newState, changedProperties, lastHints);
 
     // general notification last
@@ -1643,6 +1507,11 @@ void MIMPluginManager::handleWidgetStateChanged(unsigned int clientId,
             (void) target->imExtensionEvent(&ev);
         }
         target->update();
+    }
+
+    // Make sure windows get hidden when no longer focus
+    if (not widgetFocusState) {
+        hideActivePlugins();
     }
 }
 

@@ -58,7 +58,7 @@ void DynamicAddress::get()
 
 void DynamicAddress::successCallback(const QDBusVariant &address)
 {
-    Q_EMIT addressRecieved(address.variant().toString());
+    Q_EMIT addressReceived(address.variant().toString());
 }
 
 void DynamicAddress::errorCallback(const QDBusError &error)
@@ -73,7 +73,7 @@ FixedAddress::FixedAddress(const QString &address)
 
 void FixedAddress::get()
 {
-    Q_EMIT this->addressRecieved(mAddress);
+    Q_EMIT this->addressReceived(mAddress);
 }
 
 } // namespace DBus

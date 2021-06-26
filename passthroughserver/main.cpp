@@ -14,104 +14,81 @@
 
 #include <QtGlobal>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-#include "mimdummyinputcontext.h"
-#endif
-
 #include "connectionfactory.h"
 #include "mimserver.h"
 #include "mimserveroptions.h"
-#include "mimstandaloneserverlogic.h"
-
-#if defined(Q_WS_X11)
-#include "mimxapplication.h"
+#ifndef NOXCB
+#include "xcbplatform.h"
 #endif
+#ifdef HAVE_WAYLAND
+#include "waylandplatform.h"
+#endif // HAVE_WAYLAND
+#include "unknownplatform.h"
 
-#include <QApplication>
+#include <QGuiApplication>
 #include <QtDebug>
-#include <QPalette>
-#include <QCommonStyle>
-#include <stdlib.h>
 
 namespace {
-    void disableMInputContextPlugin()
-    {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-        // none is a special value for QT_IM_MODULE, which disables loading of any
-        // input method module in Qt 5.
-        setenv("QT_IM_MODULE", "none", true);
-#else
-        // prevent loading of minputcontext because we don't need it and starting
-        // it might trigger starting of this service by the d-bus. not nice if that is
-        // already happening :)
-        if (-1 == unsetenv("QT_IM_MODULE")) {
-            qWarning("meego-im-uiserver: unable to unset QT_IM_MODULE.");
+
+void disableMInputContextPlugin()
+{
+    // none is a special value for QT_IM_MODULE, which disables loading of any
+    // input method module in Qt 5.
+    setenv("QT_IM_MODULE", "none", true);
+}
+
+bool isDebugEnabled()
+{
+    static int debugEnabled = -1;
+
+    if (debugEnabled == -1) {
+        QByteArray debugEnvVar = qgetenv("MALIIT_DEBUG");
+        if (!debugEnvVar.isEmpty() && debugEnvVar != "0") {
+            debugEnabled = 1;
+        } else {
+            debugEnabled = 0;
         }
+    }
+
+    return debugEnabled == 1;
+}
+
+void outputMessagesToStdErr(QtMsgType type,
+                            const QMessageLogContext &context,
+                            const QString &msg)
+{
+    Q_UNUSED(context);
+    QByteArray utf_text(msg.toUtf8());
+    const char *raw(utf_text.constData());
+
+    switch (type) {
+    case QtDebugMsg:
+        if (isDebugEnabled()) {
+            fprintf(stderr, "DEBUG: %s\n", raw);
+        }
+        break;
+#if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)
+    case QtInfoMsg:
+        fprintf(stderr, "INFO: %s\n", raw);
+        break;
 #endif
-
-        // TODO: Check if hardwiring the QStyle can be removed at a later stage.
-        QApplication::setStyle(new QCommonStyle);
+    case QtWarningMsg:
+        fprintf(stderr, "WARNING: %s\n", raw);
+        break;
+    case QtCriticalMsg:
+        fprintf(stderr, "CRITICAL: %s\n", raw);
+        break;
+    case QtFatalMsg:
+        fprintf(stderr, "FATAL: %s\n", raw);
+        abort();
     }
-
-    bool isDebugEnabled()
-    {
-        static int debugEnabled = -1;
-
-        if (debugEnabled == -1) {
-            QByteArray debugEnvVar = qgetenv("MALIIT_DEBUG");
-            if (!debugEnvVar.isEmpty() && debugEnvVar != "0") {
-                debugEnabled = 1;
-            } else {
-                debugEnabled = 0;
-            }
-        }
-
-        return debugEnabled == 1;
-    }
-
-    void outputMessageToStdErr(QtMsgType type,
-                               const char *msg)
-    {
-        switch (type) {
-        case QtDebugMsg:
-            if (isDebugEnabled()) {
-                fprintf(stderr, "DEBUG: %s\n", msg);
-            }
-            break;
-        case QtWarningMsg:
-            fprintf(stderr, "WARNING: %s\n", msg);
-            break;
-        case QtCriticalMsg:
-            fprintf(stderr, "CRITICAL: %s\n", msg);
-            break;
-        case QtFatalMsg:
-            fprintf(stderr, "FATAL: %s\n", msg);
-            abort();
-        }
-    }
-
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    void outputMessagesToStdErr(QtMsgType type,
-                                const char *msg)
-    {
-        outputMessageToStdErr(type, msg);
-    }
-#else
-    void outputMessagesToStdErr(QtMsgType type,
-                                const QMessageLogContext &context,
-                                const QString &msg)
-    {
-        Q_UNUSED(context);
-
-        outputMessageToStdErr(type, msg.toLatin1().data());
-    }
-#endif
+}
 
 QSharedPointer<MInputContextConnection> createConnection(const MImServerConnectionOptions &options)
 {
 #ifdef HAVE_WAYLAND
-    if (QGuiApplication::platformName() == "wayland") {
+    auto forceDbus = qgetenv("MALIIT_FORCE_DBUS_CONNECTION");
+    if (QGuiApplication::platformName().startsWith("wayland") && (forceDbus.isEmpty() || forceDbus == "0")) {
         return QSharedPointer<MInputContextConnection>(Maliit::createWestonIMProtocolConnection());
     } else
 #endif
@@ -123,26 +100,17 @@ QSharedPointer<MInputContextConnection> createConnection(const MImServerConnecti
     }
 }
 
-}
-
-#define Q_WS_QWS
+} // unnamed namespace
 
 int main(int argc, char **argv)
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    qInstallMsgHandler(outputMessagesToStdErr);
-#else
     qInstallMessageHandler(outputMessagesToStdErr);
-#endif
 
     // QT_IM_MODULE, MApplication and QtMaemo5Style all try to load
     // MInputContext, which is fine for the application. For the passthrough
     // server itself, we absolutely need to prevent that.
     disableMInputContextPlugin();
 
-#if defined(Q_WS_X11)
-    MImServerXOptions serverXOptions;
-#endif
     MImServerCommonOptions serverCommonOptions;
     MImServerConnectionOptions connectionOptions;
 
@@ -154,27 +122,16 @@ int main(int argc, char **argv)
         printHelpMessage();
     }
 
-#if defined(Q_WS_X11)
-    MImXApplication app(argc, argv, serverXOptions);
-    QSharedPointer<MImAbstractServerLogic> serverLogic(app.serverLogic());
-#elif defined(Q_WS_QPA) || defined(Q_WS_QWS)
-    QApplication app(argc, argv);
-    QSharedPointer<MImAbstractServerLogic> serverLogic(new MImStandaloneServerLogic);
-#endif
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    // Set a dummy input context so that Qt does not create a default input
-    // context (qimsw-multi) which is expensive and not required by
-    // meego-im-uiserver.
-    app.setInputContext(new MIMDummyInputContext);
-#endif
+    QGuiApplication app(argc, argv);
 
     // Input Context Connection
     QSharedPointer<MInputContextConnection> icConnection(createConnection(connectionOptions));
 
+    QSharedPointer<Maliit::AbstractPlatform> platform(Maliit::createPlatform().release());
+
     // The actual server
     MImServer::configureSettings(MImServer::PersistentSettings);
-    MImServer imServer(serverLogic, icConnection);
+    MImServer imServer(icConnection, platform);
     Q_UNUSED(imServer);
 
     return app.exec();

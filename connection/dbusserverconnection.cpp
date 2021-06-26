@@ -14,9 +14,10 @@
 
 #include "dbusserverconnection.h"
 
+#include <maliit/namespace.h>
 #include <maliit/settingdata.h>
 
-#include "minputmethodcontext1interface_adaptor.h"
+#include "minputmethodcontext1interfaceadaptor.h"
 #include "minputmethodserver1interface_interface.h"
 #include "dbuscustomarguments.h"
 
@@ -41,13 +42,15 @@ DBusServerConnection::DBusServerConnection(const QSharedPointer<Maliit::InputCon
   , mActive(true)
   , pendingResetCalls()
 {
-    new Inputcontext1Adaptor(this);
-
     qDBusRegisterMetaType<MImPluginSettingsEntry>();
     qDBusRegisterMetaType<MImPluginSettingsInfo>();
     qDBusRegisterMetaType<QList<MImPluginSettingsInfo> >();
+    qDBusRegisterMetaType<Maliit::PreeditTextFormat>();
+    qDBusRegisterMetaType<QList<Maliit::PreeditTextFormat> >();
 
-    connect(mAddress.data(), SIGNAL(addressRecieved(QString)),
+    new Inputcontext1Adaptor(this);
+
+    connect(mAddress.data(), SIGNAL(addressReceived(QString)),
             this, SLOT(openDBusConnection(QString)));
     connect(mAddress.data(), SIGNAL(addressFetchError(QString)),
             this, SLOT(connectToDBusFailed(QString)));
@@ -90,8 +93,9 @@ void DBusServerConnection::openDBusConnection(const QString &addressString)
 
     connection.registerObject(QString::fromLatin1(InputContextAdaptorPath), this);
 
+#if 0
     connect(mProxy, SIGNAL(invokeAction(QString,QKeySequence)), this, SIGNAL(invokeAction(QString,QKeySequence)));
-
+#endif
     Q_EMIT connected();
 }
 
@@ -151,7 +155,8 @@ void DBusServerConnection::mouseClickedOnPreedit(const QPoint &pos, const QRect 
     if (!mProxy)
         return;
 
-    mProxy->mouseClickedOnPreedit(pos.x(), pos.y(), preeditRect.x(), preeditRect.y(), preeditRect.width(), preeditRect.height());
+    mProxy->mouseClickedOnPreedit(pos.x(), pos.y(), preeditRect.x(), preeditRect.y(),
+                                  preeditRect.width(), preeditRect.height());
 }
 
 void DBusServerConnection::setPreedit(const QString &text, int cursorPos)
@@ -162,8 +167,7 @@ void DBusServerConnection::setPreedit(const QString &text, int cursorPos)
     mProxy->setPreedit(text, cursorPos);
 }
 
-void DBusServerConnection::updateWidgetInformation(const QMap<QString, QVariant> &stateInformation,
-                                                   bool focusChanged)
+void DBusServerConnection::updateWidgetInformation(const QMap<QString, QVariant> &stateInformation, bool focusChanged)
 {
     if (!mProxy)
         return;
@@ -259,12 +263,14 @@ void DBusServerConnection::pluginSettingsLoaded(const QList<MImPluginSettingsInf
     pluginSettingsReceived(info);
 }
 
-void DBusServerConnection::keyEvent(int type, int key, int modifiers, const QString &text, bool autoRepeat, int count, uchar requestType)
+void DBusServerConnection::keyEvent(int type, int key, int modifiers, const QString &text, bool autoRepeat,
+                                    int count, uchar requestType)
 {
     keyEvent(type, key, modifiers, text, autoRepeat, count, static_cast<Maliit::EventRequestType>(requestType));
 }
 
-void DBusServerConnection::notifyExtendedAttributeChanged(int id, const QString &target, const QString &targetItem, const QString &attribute, const QDBusVariant &value)
+void DBusServerConnection::notifyExtendedAttributeChanged(int id, const QString &target, const QString &targetItem,
+                                                          const QString &attribute, const QDBusVariant &value)
 {
     extendedAttributeChanged(id, target, targetItem, attribute, value.variant());
 }

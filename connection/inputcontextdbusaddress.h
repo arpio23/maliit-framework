@@ -17,8 +17,10 @@
 
 #include <QObject>
 
+QT_BEGIN_NAMESPACE
 class QDBusVariant;
 class QDBusError;
+QT_END_NAMESPACE
 
 namespace Maliit {
 namespace InputContext {
@@ -35,7 +37,7 @@ public:
     virtual void get() = 0;
 
 Q_SIGNALS:
-    void addressRecieved(const QString &address);
+    void addressReceived(const QString &address);
     void addressFetchError(const QString &errorMessage);
 };
 

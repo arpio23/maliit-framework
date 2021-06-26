@@ -9,7 +9,9 @@
 class MIMPluginManager;
 class MIMPluginManagerPrivate;
 class MInputContextTestConnection;
+QT_BEGIN_NAMESPACE
 class QDBusInterface;
+QT_END_NAMESPACE
 
 class Ut_MIMPluginManager : public QObject
 {
@@ -41,8 +43,6 @@ private Q_SLOTS:
     void testSubViews();
     void testActiveSubView();
 
-    void testRegionUpdates();
-
     void testLoadedPluginsInfo_data();
     void testLoadedPluginsInfo();
 
@@ -57,7 +57,6 @@ private Q_SLOTS:
 private:
     void handleMessages();
 
-    QWidget *proxyWidget;
     QString pluginPath;
     MIMPluginManager *manager;
     MIMPluginManagerPrivate *subject;

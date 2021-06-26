@@ -22,11 +22,10 @@
 #include "mimonscreenplugins.h"
 #include "mimsettings.h"
 #include "mimhwkeyboardtracker.h"
-#include "mindicatorserviceclient.h"
 #include <maliit/settingdata.h>
 #include <maliit/plugins/abstractpluginsetting.h>
-
-#include "abstractsurfacegroup.h"
+#include "windowgroup.h"
+#include "abstractplatform.h"
 
 #include <QtCore>
 
@@ -34,11 +33,8 @@ namespace Maliit {
 namespace Plugins {
     class InputMethodPlugin;
 }
-namespace Server {
-    class AbstractSurfaceGroupFactory;
 }
-}
-class MImAbstractPluginFactory;
+
 class MInputContextConnection;
 class MIMPluginManager;
 class MAttributeExtensionManager;
@@ -46,9 +42,6 @@ class MSharedAttributeExtensionManager;
 class MImSettings;
 class MAbstractInputMethod;
 class MIMPluginManagerAdaptor;
-
-using Maliit::Server::AbstractSurfaceGroup;
-using Maliit::Server::AbstractSurfaceGroupFactory;
 
 /* Internal class only! Interfaces here change, internal developers only*/
 class PluginSetting : public Maliit::Plugins::AbstractPluginSetting
@@ -76,7 +69,6 @@ class MIMPluginManagerPrivate
     Q_DECLARE_PUBLIC(MIMPluginManager)
 public:
     typedef QSet<Maliit::HandlerState> PluginState;
-    typedef QWeakPointer<QWidget> WeakWidget;
 
     enum ShowInputMethodRequest {
         DontShowInputMethod,
@@ -89,16 +81,15 @@ public:
         PluginState state;
         Maliit::SwitchDirection lastSwitchDirection;
         QString pluginId; // the library filename is used as ID
-        QSharedPointer<AbstractSurfaceGroup> surfaceGroup;
+        QSharedPointer<Maliit::WindowGroup> windowGroup;
     };
 
     typedef QMap<Maliit::Plugins::InputMethodPlugin *, PluginDescription> Plugins;
     typedef QSet<Maliit::Plugins::InputMethodPlugin *> ActivePlugins;
     typedef QMap<Maliit::HandlerState, Maliit::Plugins::InputMethodPlugin *> HandlerMap;
-    typedef QMap<QString, MImAbstractPluginFactory*> PluginsFactory;
 
     MIMPluginManagerPrivate(const QSharedPointer<MInputContextConnection>& connection,
-                            const QSharedPointer<AbstractSurfaceGroupFactory>& surfaceGroupFactory,
+                            const QSharedPointer<Maliit::AbstractPlatform> &platform,
                             MIMPluginManager *p);
     virtual ~MIMPluginManagerPrivate();
 
@@ -107,7 +98,6 @@ public:
     void activatePlugin(Maliit::Plugins::InputMethodPlugin *plugin);
     void loadPlugins();
     bool loadPlugin(const QDir &dir, const QString &fileName);
-    bool loadFactoryPlugin(const QDir &dir, const QString &fileName);
     void addHandlerMap(Maliit::HandlerState state, const QString &pluginName);
     void registerSettings();
     void registerSettings(const MImPluginSettingsInfo &info);
@@ -164,10 +154,6 @@ public:
      */
     void _q_setActiveSubView(const QString &, Maliit::HandlerState);
 
-    //! Called a moment after hideActivePlugins is called to disable region
-    //! updates and force an empty region in case of badly behaving plugins.
-    void _q_ensureEmptyRegionWhenHidden();
-
     /*!
      * \brief Called in response to changed active on screen subview key change
      */
@@ -189,7 +175,6 @@ public:
     Plugins plugins;
     ActivePlugins activePlugins;
     QSet<MAbstractInputMethod *> targets;
-    PluginsFactory factories;
     QList<MImPluginSettingsInfo> settings;
 
     QStringList paths;
@@ -199,14 +184,11 @@ public:
     QList<MImSettings *> handlerToPluginConfs;
     MImSettings *imAccessoryEnabledConf;
     QString activeSubViewIdOnScreen;
-    QRegion activeImRegion;
 
     MIMPluginManagerAdaptor *adaptor;
 
     MIMPluginManager *q_ptr;
-    bool connectionValid;
 
-    bool acceptRegionUpdates;
     bool visible;
 
     typedef QMap<Maliit::HandlerState, QString> InputSourceToNameMap;
@@ -214,18 +196,15 @@ public:
 
     MAttributeExtensionId toolbarId;
 
-    MIndicatorServiceClient indicatorService;
-
-    QTimer ensureEmptyRegionWhenHiddenTimer;
-
     MImOnScreenPlugins onScreenPlugins;
     MImHwKeyboardTracker hwkbTracker;
 
-    QSharedPointer<AbstractSurfaceGroupFactory> mSurfaceGroupFactory;
     int lastOrientation;
 
     QScopedPointer<MAttributeExtensionManager> attributeExtensionManager;
     QScopedPointer<MSharedAttributeExtensionManager> sharedAttributeExtensionManager;
+
+    QSharedPointer<Maliit::AbstractPlatform> m_platform;
 };
 
 #endif

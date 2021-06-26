@@ -15,18 +15,14 @@
 #include "minputmethodhost.h"
 #include "minputcontextconnection.h"
 #include "mimpluginmanager.h"
-#include "mindicatorserviceclient.h"
 #include <maliit/plugins/abstractinputmethod.h>
-
-#include <QWidget>
-#include <QGraphicsView>
+#include "windowgroup.h"
 
 #include <maliit/namespace.h>
 
 MInputMethodHost::MInputMethodHost(const QSharedPointer<MInputContextConnection> &inputContextConnection,
                                    MIMPluginManager *pluginManager,
-                                   MIndicatorServiceClient &indicatorService,
-                                   AbstractSurfaceFactory *surfaceFactory,
+                                   const QSharedPointer<Maliit::WindowGroup> &windowGroup,
                                    const QString &plugin,
                                    const QString &description)
     : MAbstractInputMethodHost(),
@@ -34,10 +30,9 @@ MInputMethodHost::MInputMethodHost(const QSharedPointer<MInputContextConnection>
       pluginManager(pluginManager),
       inputMethod(0),
       enabled(false),
-      indicatorService(indicatorService),
-      mSurfaceFactory(surfaceFactory),
       pluginId(plugin),
-      pluginDescription(description)
+      pluginDescription(description),
+      mWindowGroup(windowGroup)
 {
     // nothing
 }
@@ -92,6 +87,12 @@ bool MInputMethodHost::hasSelection(bool &valid)
 QString MInputMethodHost::selection(bool &valid)
 {
     return connection->selection(valid);
+}
+
+void MInputMethodHost::registerWindow (QWindow *window,
+                                       Maliit::Position position)
+{
+    mWindowGroup->setupWindow(window, position);
 }
 
 int MInputMethodHost::preeditClickPos(bool &valid) const
@@ -181,13 +182,6 @@ void MInputMethodHost::setGlobalCorrectionEnabled(bool correctionEnabled)
     }
 }
 
-void MInputMethodHost::setInputModeIndicator(Maliit::InputModeIndicator mode)
-{
-    if (enabled) {
-        indicatorService.setInputModeIndicator(static_cast<Maliit::InputModeIndicator>(mode));
-    }
-}
-
 void MInputMethodHost::switchPlugin(Maliit::SwitchDirection direction)
 {
     if (enabled) {
@@ -202,16 +196,14 @@ void MInputMethodHost::switchPlugin(const QString &pluginName)
     }
 }
 
-void MInputMethodHost::setScreenRegion(const QRegion &region)
+void MInputMethodHost::setScreenRegion(const QRegion &region, QWindow *window)
 {
-    if (enabled) {
-        pluginManager->updateRegion(region);
-    }
+    mWindowGroup->setScreenRegion(region, window);
 }
 
-void MInputMethodHost::setInputMethodArea(const QRegion &)
+void MInputMethodHost::setInputMethodArea(const QRegion &region, QWindow *window)
 {
-    // TODO: remove function since it is handled by surfaces now
+    mWindowGroup->setInputMethodArea(region, window);
 }
 
 void MInputMethodHost::setSelection(int start, int length)
@@ -249,15 +241,15 @@ int MInputMethodHost::anchorPosition(bool &valid)
     return connection->anchorPosition(valid);
 }
 
-AbstractSurfaceFactory *MInputMethodHost::surfaceFactory()
-{
-    return mSurfaceFactory;
-}
-
 AbstractPluginSetting *MInputMethodHost::registerPluginSetting(const QString &key,
                                                                const QString &description,
                                                                Maliit::SettingEntryType type,
                                                                const QVariantMap &attributes)
 {
     return pluginManager->registerPluginSetting(pluginId, pluginDescription, key, description, type, attributes);
+}
+
+QVariant MInputMethodHost::inputMethodQuery(Qt::InputMethodQuery query, const QVariant &argument) const
+{
+    return connection->inputMethodQuery(query, argument);
 }

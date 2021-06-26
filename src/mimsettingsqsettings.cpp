@@ -1,7 +1,7 @@
 /* * This file is part of Maliit framework *
  *
  * Copyright (C) 2012 Mattia Barbon <mattia@develer.com>
- * Copyright (C) 2012 Openismus GmbH
+ * Copyright (C) 2012 Canonical Ltd
  *
  * Contact: maliit-discuss@lists.maliit.org
  *
@@ -105,6 +105,7 @@ void MImSettingsQSettingsBackend::set(const QVariant &val)
         return;
 
     d->settingsInstance->setValue(d->key, val);
+    d->settingsInstance->sync();
     d->notify();
 }
 
@@ -116,6 +117,7 @@ void MImSettingsQSettingsBackend::unset()
         return;
 
     d->settingsInstance->remove(d->key);
+    d->settingsInstance->sync();
     d->notify();
 }
 

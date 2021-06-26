@@ -1,6 +1,7 @@
-/* * This file is part of Maliit framework *
+/* This file is part of Maliit framework
  *
- * Copyright (C) 2012 Openismus GmbH
+ * Copyright (C) 2012 Canonical Ltd
+ *
  * Contact: maliit-discuss@lists.maliit.org
  *
  * This library is free software; you can redistribute it and/or
@@ -12,7 +13,6 @@
 
 #include "ut_mimonscreenplugins.h"
 
-#include "config.h"
 #include "mimonscreenplugins.h"
 #include "mimsettings.h"
 #include "mimsettingsqsettings.h"
@@ -22,38 +22,23 @@
 namespace
 {
 
-const QString Organization = "maliit.org";
-const QString Application = "server-tests";
 const QString DefaultPlugin = MALIIT_DEFAULT_PLUGIN;
 
 }
 
 void Ut_MImOnScreenPlugins::initTestCase()
 {
-    MImSettings::setImplementationFactory(new MImSettingsQSettingsBackendFactory(Organization, Application));
-
-    // Make sure we start with empty/non-existing config file:
-    QSettings settings(Organization, Application);
-    QFile file(settings.fileName());
-    file.remove();
+    MImSettings::setPreferredSettingsType(MImSettings::TemporarySettings);
 }
 
 void Ut_MImOnScreenPlugins::cleanupTestCase()
-{
-    // Make sure we remove the config file at the end, too:
-    QSettings settings(Organization, Application);
-    QFile file(settings.fileName());
-    file.remove();
-}
+{}
 
 void Ut_MImOnScreenPlugins::init()
 {}
 
 void Ut_MImOnScreenPlugins::cleanup()
-{
-    QSettings settings(Organization, Application);
-    settings.clear();
-}
+{}
 
 void Ut_MImOnScreenPlugins::testActiveAndEnabledSubviews_data()
 {
@@ -101,14 +86,15 @@ void Ut_MImOnScreenPlugins::testActiveAndEnabledSubviews()
     QFETCH(int, expected_enabled_count);
     QFETCH(int, expected_active_index);
 
-    QSettings settings(Organization, Application);
+    MImSettings activeSetting(active_key);
+    MImSettings enabledSetting(enabled_key);
 
     if (not initially_active.isEmpty()) {
-        settings.setValue(active_key, initially_active);
+        activeSetting.set(initially_active);
     }
 
     if (not initially_enabled.isEmpty()) {
-        settings.setValue(enabled_key, initially_enabled);
+        enabledSetting.set(initially_enabled);
     }
 
     MImOnScreenPlugins plugins;

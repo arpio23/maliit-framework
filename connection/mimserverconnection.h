@@ -34,38 +34,23 @@ public:
 
     /* Outgoing communication */
     virtual void activateContext();
-
     virtual void showInputMethod();
-
     virtual void hideInputMethod();
-
     virtual void mouseClickedOnPreedit(const QPoint &pos, const QRect &preeditRect);
-
     virtual void setPreedit(const QString &text, int cursorPos);
-
-    virtual void updateWidgetInformation(const QMap<QString, QVariant> &stateInformation,
-                                 bool focusChanged);
-
+    virtual void updateWidgetInformation(const QMap<QString, QVariant> &stateInformation, bool focusChanged);
     virtual void reset(bool requireSynchronization);
-
     virtual void appOrientationAboutToChange(int angle);
-
     virtual void appOrientationChanged(int angle);
-
     virtual void setCopyPasteState(bool copyAvailable, bool pasteAvailable);
-
     virtual void processKeyEvent(QEvent::Type keyType, Qt::Key keyCode,
-                         Qt::KeyboardModifiers modifiers,
-                         const QString &text, bool autoRepeat, int count,
-                         quint32 nativeScanCode, quint32 nativeModifiers, unsigned long time);
-
+                                 Qt::KeyboardModifiers modifiers,
+                                 const QString &text, bool autoRepeat, int count,
+                                 quint32 nativeScanCode, quint32 nativeModifiers, unsigned long time);
     virtual void registerAttributeExtension(int id, const QString &fileName);
-
     virtual void unregisterAttributeExtension(int id);
-
     virtual void setExtendedAttribute(int id, const QString &target, const QString &targetItem,
-                              const QString &attribute, const QVariant &value);
-
+                                      const QString &attribute, const QVariant &value);
     virtual void loadPluginSettings(const QString &descriptionLanguage);
 
 public:
@@ -99,7 +84,7 @@ public:
      * and insert the commit string directly before the preedit string.
      */
     Q_SIGNAL void commitString(const QString &string, int replacementStart = 0,
-                              int replacementLength = 0, int cursorPos = -1);
+                               int replacementLength = 0, int cursorPos = -1);
 
     /*!
      * \brief Updates preedit string of the current focus widget
@@ -112,12 +97,12 @@ public:
      *
      */
     Q_SIGNAL void updatePreedit(const QString &string, const QList<Maliit::PreeditTextFormat> &preeditFormats,
-                               int replacementStart = 0, int replacementLength = 0, int cursorPos = -1);
+                                int replacementStart = 0, int replacementLength = 0, int cursorPos = -1);
 
     //! \brief Sends a non-printable key event. Parameters as in QKeyEvent constructor
     Q_SIGNAL void keyEvent(int type, int key, int modifiers, const QString &text, bool autoRepeat,
-                          int count, Maliit::EventRequestType requestType
-                          = Maliit::EventRequestBoth);
+                           int count, Maliit::EventRequestType requestType
+                           = Maliit::EventRequestBoth);
 
     //!
     // \brief Updates the input method window area

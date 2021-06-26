@@ -13,11 +13,6 @@
 
 #include "ut_mimpluginmanagerconfig.h"
 
-#include "dummyimplugin.h"
-#include "dummyimplugin3.h"
-#include "dummyinputmethod.h"
-#include "dummyinputmethod3.h"
-
 #include "minputcontextconnection.h"
 #include "mimsettingsqsettings.h"
 
@@ -25,9 +20,6 @@
 
 #include <QTest>
 #include <QProcess>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QWidget>
 #include <QRegExp>
 #include <QCoreApplication>
 #include <QPointer>
@@ -37,6 +29,7 @@
 #include <mimpluginmanager.h>
 #include <mimpluginmanager_p.h>
 #include <maliit/plugins/inputmethodplugin.h>
+#include <unknownplatform.h>
 
 #include "mattributeextensionmanager.h"
 #include "msharedattributeextensionmanager.h"
@@ -48,9 +41,6 @@ Q_DECLARE_METATYPE(HandlerStates);
 Q_DECLARE_METATYPE(Maliit::HandlerState);
 
 namespace {
-    const QString Organization = "maliit.org";
-    const QString Application = "server-tests";
-
     const QString ConfigRoot = MALIIT_CONFIG_ROOT;
     const QString MImPluginPaths = ConfigRoot + "paths";
 
@@ -75,20 +65,10 @@ namespace {
 void Ut_MIMPluginManagerConfig::initTestCase()
 {
     MImSettings::setPreferredSettingsType(MImSettings::TemporarySettings);
-    MImSettings::setImplementationFactory(new MImSettingsQSettingsBackendFactory(Organization, Application));
-
-    // Make sure we start with empty/non-existing config file:
-    QSettings settings(Organization, Application);
-    QFile file(settings.fileName());
-    file.remove();
 }
  
 void Ut_MIMPluginManagerConfig::cleanupTestCase()
 {
-    // Make sure we remove the config file at the end, too:
-    QSettings settings(Organization, Application);
-    QFile file(settings.fileName());
-    file.remove();
 }
 
 void Ut_MIMPluginManagerConfig::init()
@@ -119,7 +99,7 @@ void Ut_MIMPluginManagerConfig::testNoActiveSubView()
     activePluginSettings->unset();
 
     QSharedPointer<MInputContextConnection> icConnection(connection);
-    manager = new MIMPluginManager(icConnection, QSharedPointer<Maliit::Server::AbstractSurfaceGroupFactory>(new MaliitTestUtils::TestSurfaceGroupFactory));
+    manager = new MIMPluginManager(icConnection, QSharedPointer<Maliit::AbstractPlatform>(new Maliit::UnknownPlatform));
     subject = manager->d_ptr;
 
     // The first enabled subview should have been auto-selected as the
@@ -134,7 +114,7 @@ void Ut_MIMPluginManagerConfig::testEmptyConfig()
     activePluginSettings->unset();
 
     QSharedPointer<MInputContextConnection> icConnection(connection);
-    manager = new MIMPluginManager(icConnection, QSharedPointer<Maliit::Server::AbstractSurfaceGroupFactory>(new MaliitTestUtils::TestSurfaceGroupFactory));
+    manager = new MIMPluginManager(icConnection, QSharedPointer<Maliit::AbstractPlatform>(new Maliit::UnknownPlatform));
     subject = manager->d_ptr;
 
     // One subview should have been auto-activated and enabled.
@@ -153,7 +133,7 @@ void Ut_MIMPluginManagerConfig::autoLanguageSubView()
     activePluginSettings->set(QStringList() << pluginId3 + ":");
 
     QSharedPointer<MInputContextConnection> icConnection(connection);
-    manager = new MIMPluginManager(icConnection, QSharedPointer<Maliit::Server::AbstractSurfaceGroupFactory>(new MaliitTestUtils::TestSurfaceGroupFactory));
+    manager = new MIMPluginManager(icConnection, QSharedPointer<Maliit::AbstractPlatform>(new Maliit::UnknownPlatform));
     subject = manager->d_ptr;
 
     MImOnScreenPlugins& plugins = subject->onScreenPlugins;
