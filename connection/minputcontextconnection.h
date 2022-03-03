@@ -18,13 +18,11 @@
 #include <maliit/namespace.h>
 
 #include <QtCore>
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include <QWindow>
-#else
-#include <QWidget> // For WId
-#endif
 
+QT_BEGIN_NAMESPACE
 class QKeyEvent;
+QT_END_NAMESPACE
 
 class MInputContextConnectionPrivate;
 class MAbstractInputMethod;
@@ -219,6 +217,8 @@ public:
 
     virtual void sendActivationLostEvent();
 
+    QVariant inputMethodQuery(Qt::InputMethodQuery query, const QVariant &argument) const;
+
 public: // Inbound communication handlers
     //! ipc method provided to application, makes the application the active one
     void activateContext(unsigned int connectionId);
@@ -371,8 +371,12 @@ protected:
     bool globalCorrectionEnabled();
     bool redirectKeysEnabled();
 
-    void handleDisconnection(unsigned int connectionId);
     void handleActivation(unsigned int connectionId);
+
+    QVariantMap widgetState() const;
+
+public:
+    void handleDisconnection(unsigned int connectionId);
 
 private:
     /*!
@@ -385,7 +389,7 @@ private:
     int lastOrientation;
 
     /* FIXME: rename with m prefix, and provide protected accessors for derived classes */
-    QMap<QString, QVariant> widgetState;
+    QMap<QString, QVariant> mWidgetState;
     bool mGlobalCorrectionEnabled;
     bool mRedirectionEnabled;
     bool mDetectableAutoRepeat;

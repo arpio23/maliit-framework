@@ -22,11 +22,11 @@
 
 #include <maliit/namespace.h>
 
-class QWidget;
+QT_BEGIN_NAMESPACE
 class QRegion;
 class QPoint;
 class QRect;
-class QGraphicsScene;
+QT_END_NAMESPACE
 class MAbstractInputMethodHost;
 class MAbstractInputMethodPrivate;
 class MKeyOverride;

@@ -14,7 +14,7 @@
 
 #include "dbusinputcontextconnection.h"
 
-#include "minputmethodserver1interface_adaptor.h"
+#include "minputmethodserver1interfaceadaptor.h"
 #include "minputmethodcontext1interface_interface.h"
 #include "dbuscustomarguments.h"
 
@@ -26,15 +26,17 @@
 
 namespace
 {
-    const char * const DBusPath = "/com/meego/inputmethod/uiserver1";
-    const char * const DBusInterface = "com.meego.inputmethod.uiserver1";
 
-    const char * const DBusClientPath = "/com/meego/inputmethod/inputcontext";
-    const char * const DBusClientInterface = "com.meego.inputmethod.inputcontext1";
+const char * const DBusPath = "/com/meego/inputmethod/uiserver1";
+const char * const DBusInterface = "com.meego.inputmethod.uiserver1";
 
-    const char * const DBusLocalPath("/org/freedesktop/DBus/Local");
-    const char * const DBusLocalInterface("org.freedesktop.DBus.Local");
-    const char * const DisconnectedSignal("Disconnected");
+const char * const DBusClientPath = "/com/meego/inputmethod/inputcontext";
+const char * const DBusClientInterface = "com.meego.inputmethod.inputcontext1";
+
+const char * const DBusLocalPath("/org/freedesktop/DBus/Local");
+const char * const DBusLocalInterface("org.freedesktop.DBus.Local");
+const char * const DisconnectedSignal("Disconnected");
+
 }
 
 DBusInputContextConnection::DBusInputContextConnection(const QSharedPointer<Maliit::Server::DBus::Address> &address)
@@ -50,6 +52,8 @@ DBusInputContextConnection::DBusInputContextConnection(const QSharedPointer<Mali
     qDBusRegisterMetaType<MImPluginSettingsEntry>();
     qDBusRegisterMetaType<MImPluginSettingsInfo>();
     qDBusRegisterMetaType<QList<MImPluginSettingsInfo> >();
+    qDBusRegisterMetaType<Maliit::PreeditTextFormat>();
+    qDBusRegisterMetaType<QList<Maliit::PreeditTextFormat> >();
 
     new Uiserver1Adaptor(this);
 }
@@ -89,6 +93,8 @@ DBusInputContextConnection::onDisconnection()
     ComMeegoInputmethodInputcontext1Interface *proxy = mProxys.take(connectionNumber);
     mConnections.remove(connectionNumber);
     delete proxy;
+    handleDisconnection(connectionNumber);
+    QDBusConnection::disconnectFromPeer(name);
 }
 
 void
@@ -249,6 +255,7 @@ DBusInputContextConnection::sendActivationLostEvent()
 void
 DBusInputContextConnection::updateInputMethodArea(const QRegion &region)
 {
+    qDebug() << "Updating input method area to" << region;
     ComMeegoInputmethodInputcontext1Interface *proxy = mProxys.value(activeConnection);
     if (proxy) {
         QRect rect = region.boundingRect();

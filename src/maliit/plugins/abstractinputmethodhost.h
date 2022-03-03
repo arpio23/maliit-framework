@@ -23,9 +23,11 @@
 
 #include <maliit/namespace.h>
 
+QT_BEGIN_NAMESPACE
 class QString;
 class QRegion;
 class QKeyEvent;
+QT_END_NAMESPACE
 
 class MImPluginDescription;
 class MImSubViewDescription;
@@ -33,7 +35,6 @@ class MAbstractInputMethodHostPrivate;
 
 namespace Maliit {
 namespace Plugins {
-    class AbstractSurfaceFactory;
     class AbstractPluginSetting;
 }
 }
@@ -121,10 +122,16 @@ public:
     virtual QString selection(bool &valid) = 0;
 
     /*!
-     * \brief returns a pixmap that needs to be drawn as the background of the
-     *        input method. Pixmap contains the application's window contents.
+     * \brief Registers a window in server.
+     *
+     * Should be called for every QWindow created by plugin before calling
+     * create on it. Note that this function set some flags on the window, so be
+     * careful to not reset them by accident.
      */
-    QPixmap background() const;
+    virtual void registerWindow (QWindow *window,
+                                 Maliit::Position position) = 0;
+
+    virtual QVariant inputMethodQuery(Qt::InputMethodQuery query, const QVariant &argument = QVariant()) const = 0;
 
 Q_SIGNALS:
     //! This signal is emitted when input method plugins are loaded or unloaded
@@ -212,13 +219,6 @@ public Q_SLOTS:
     virtual void setGlobalCorrectionEnabled(bool enabled) = 0;
 
     /*!
-     * \brief Sets input mode indicator state.
-     * \param mode Input mode indicator state.
-     * \sa InputModeIndicator.
-     */
-    virtual void setInputModeIndicator(Maliit::InputModeIndicator mode) = 0;
-
-    /*!
      * Asks environment to change active plugin according to \a direction.
      */
     virtual void switchPlugin(Maliit::SwitchDirection direction) = 0;
@@ -234,8 +234,9 @@ public Q_SLOTS:
      * area do not fall through to the application
      *
      * \param region the new region
+     * \param window window for which region applies. If zero, first registered window is used.
      */
-    virtual void setScreenRegion(const QRegion &region) = 0;
+    virtual void setScreenRegion(const QRegion &region, QWindow *window = 0) = 0;
 
     /*!
      * Sets part of the screen area covered by the input method that
@@ -246,8 +247,9 @@ public Q_SLOTS:
      * effectively used as the avoidance area.
      *
      * \param region the new region
+     * \param window window for which input method area applies. If zero, first registered window is used.
      */
-    virtual void setInputMethodArea(const QRegion &region) = 0;
+    virtual void setInputMethodArea(const QRegion &region, QWindow *window = 0) = 0;
 
     /*!
      *\brief Sets selection text from \a start with \a length in the application widget.
@@ -293,10 +295,6 @@ public:
      * This can be used as a hint to determine text direction in input fields, for example.
      */
     virtual void setLanguage(const QString &language);
-
-    /*!
-      */
-    virtual Maliit::Plugins::AbstractSurfaceFactory* surfaceFactory() = 0;
 
     /*!
      * \brief Register a new plugin setting

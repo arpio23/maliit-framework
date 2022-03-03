@@ -1,6 +1,6 @@
 /* This file is part of Maliit framework
  *
- * Copyright (C) 2012 Openismus GmbH
+ * Copyright (C) 2012 Canonical Ltd
  *
  * Contact: maliit-discuss@lists.maliit.org
  *
@@ -29,7 +29,7 @@
 G_BEGIN_DECLS
 
 MaliitSettingsEntry *
-maliit_settings_entry_new_from_dbus_data (GValueArray *info,
+maliit_settings_entry_new_from_dbus_data (GVariant                 *info,
                                           MaliitAttributeExtension *extension);
 
 G_END_DECLS

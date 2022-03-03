@@ -28,8 +28,6 @@ namespace {
     const char * const CursorPositionAttribute = "cursorPosition";
     const char * const HasSelectionAttribute = "hasSelection";
     const char * const InputMethodModeAttribute = "inputMethodMode";
-    const char * const ToolbarIdAttribute = "toolbarId";
-    const char * const ToolbarAttribute = "toolbar";
     const char * const WinId = "winId";
     const char * const CursorRectAttribute = "cursorRectangle";
     const char * const HiddenTextAttribute = "hiddenText";
@@ -79,20 +77,20 @@ MInputContextConnection::~MInputContextConnection()
 /* Accessors to widgetState */
 bool MInputContextConnection::focusState(bool &valid)
 {
-    QVariant focusStateVariant = widgetState[FocusStateAttribute];
+    QVariant focusStateVariant = mWidgetState[FocusStateAttribute];
     valid = focusStateVariant.isValid();
     return focusStateVariant.toBool();
 }
 
 int MInputContextConnection::contentType(bool &valid)
 {
-    QVariant contentTypeVariant = widgetState[ContentTypeAttribute];
+    QVariant contentTypeVariant = mWidgetState[ContentTypeAttribute];
     return contentTypeVariant.toInt(&valid);
 }
 
 bool MInputContextConnection::correctionEnabled(bool &valid)
 {
-    QVariant correctionVariant = widgetState[CorrectionAttribute];
+    QVariant correctionVariant = mWidgetState[CorrectionAttribute];
     valid = correctionVariant.isValid();
     return correctionVariant.toBool();
 }
@@ -100,36 +98,36 @@ bool MInputContextConnection::correctionEnabled(bool &valid)
 
 bool MInputContextConnection::predictionEnabled(bool &valid)
 {
-    QVariant predictionVariant = widgetState[PredictionAttribute];
+    QVariant predictionVariant = mWidgetState[PredictionAttribute];
     valid = predictionVariant.isValid();
     return predictionVariant.toBool();
 }
 
 bool MInputContextConnection::autoCapitalizationEnabled(bool &valid)
 {
-    QVariant capitalizationVariant = widgetState[AutoCapitalizationAttribute];
+    QVariant capitalizationVariant = mWidgetState[AutoCapitalizationAttribute];
     valid = capitalizationVariant.isValid();
     return capitalizationVariant.toBool();
 }
 
 QRect MInputContextConnection::cursorRectangle(bool &valid)
 {
-    QVariant cursorRectVariant = widgetState[CursorRectAttribute];
+    QVariant cursorRectVariant = mWidgetState[CursorRectAttribute];
     valid = cursorRectVariant.isValid();
     return cursorRectVariant.toRect();
 }
 
 bool MInputContextConnection::hiddenText(bool &valid)
 {
-    QVariant hiddenTextVariant = widgetState[HiddenTextAttribute];
+    QVariant hiddenTextVariant = mWidgetState[HiddenTextAttribute];
     valid = hiddenTextVariant.isValid();
     return hiddenTextVariant.toBool();
 }
 
 bool MInputContextConnection::surroundingText(QString &text, int &cursorPosition)
 {
-    QVariant textVariant = widgetState[SurroundingTextAttribute];
-    QVariant posVariant = widgetState[CursorPositionAttribute];
+    QVariant textVariant = mWidgetState[SurroundingTextAttribute];
+    QVariant posVariant = mWidgetState[CursorPositionAttribute];
 
     if (textVariant.isValid() && posVariant.isValid()) {
         text = textVariant.toString();
@@ -142,14 +140,14 @@ bool MInputContextConnection::surroundingText(QString &text, int &cursorPosition
 
 bool MInputContextConnection::hasSelection(bool &valid)
 {
-    QVariant selectionVariant = widgetState[HasSelectionAttribute];
+    QVariant selectionVariant = mWidgetState[HasSelectionAttribute];
     valid = selectionVariant.isValid();
     return selectionVariant.toBool();
 }
 
 int MInputContextConnection::inputMethodMode(bool &valid)
 {
-    QVariant modeVariant = widgetState[InputMethodModeAttribute];
+    QVariant modeVariant = mWidgetState[InputMethodModeAttribute];
     return modeVariant.toInt(&valid);
 }
 
@@ -165,7 +163,7 @@ WId MInputContextConnection::winId()
     WId result = 0;
     return result;
 #else
-    QVariant winIdVariant = widgetState[WinId];
+    QVariant winIdVariant = mWidgetState[WinId];
     // after transfer by dbus type can change
     switch (winIdVariant.type()) {
     case QVariant::UInt:
@@ -187,14 +185,14 @@ WId MInputContextConnection::winId()
 
 int MInputContextConnection::anchorPosition(bool &valid)
 {
-    QVariant posVariant = widgetState[AnchorPositionAttribute];
+    QVariant posVariant = mWidgetState[AnchorPositionAttribute];
     valid = posVariant.isValid();
     return posVariant.toInt();
 }
 
 int MInputContextConnection::preeditClickPos(bool &valid) const
 {
-    QVariant selectionVariant = widgetState[PreeditClickPosAttribute];
+    QVariant selectionVariant = mWidgetState[PreeditClickPosAttribute];
     valid = selectionVariant.isValid();
     return selectionVariant.toInt();
 }
@@ -263,9 +261,12 @@ MInputContextConnection::updateWidgetInformation(
     unsigned int connectionId, const QMap<QString, QVariant> &stateInfo,
     bool handleFocusChange)
 {
-    QMap<QString, QVariant> oldState = widgetState;
+    if (activeConnection != connectionId)
+        return;
 
-    widgetState = stateInfo;
+    QMap<QString, QVariant> oldState = mWidgetState;
+
+    mWidgetState = stateInfo;
 
 #ifndef Q_WS_WIN
     if (handleFocusChange) {
@@ -273,7 +274,7 @@ MInputContextConnection::updateWidgetInformation(
     }
 #endif
 
-    Q_EMIT widgetStateChanged(connectionId, widgetState, oldState, handleFocusChange);
+    Q_EMIT widgetStateChanged(connectionId, mWidgetState, oldState, handleFocusChange);
 }
 
 void
@@ -387,7 +388,7 @@ bool MInputContextConnection::redirectKeysEnabled()
 void MInputContextConnection::sendCommitString(const QString &string, int replaceStart,
                                           int replaceLength, int cursorPos) {
 
-    const int cursorPosition(widgetState[CursorPositionAttribute].toInt());
+    const int cursorPosition(mWidgetState[CursorPositionAttribute].toInt());
     bool validAnchor(false);
 
     preedit.clear();
@@ -398,10 +399,10 @@ void MInputContextConnection::sendCommitString(const QString &string, int replac
         && validAnchor) {
         const int insertPosition(cursorPosition + replaceStart);
         if (insertPosition >= 0) {
-            widgetState[SurroundingTextAttribute]
-                = widgetState[SurroundingTextAttribute].toString().insert(insertPosition, string);
-            widgetState[CursorPositionAttribute] = cursorPos < 0 ? (insertPosition + string.length()) : cursorPos;
-            widgetState[AnchorPositionAttribute] = widgetState[CursorPositionAttribute];
+            mWidgetState[SurroundingTextAttribute]
+                = mWidgetState[SurroundingTextAttribute].toString().insert(insertPosition, string);
+            mWidgetState[CursorPositionAttribute] = cursorPos < 0 ? (insertPosition + string.length()) : cursorPos;
+            mWidgetState[AnchorPositionAttribute] = mWidgetState[CursorPositionAttribute];
         }
     }
 }
@@ -413,8 +414,8 @@ void MInputContextConnection::sendKeyEvent(const QKeyEvent &keyEvent,
         && preedit.isEmpty()
         && keyEvent.key() == Qt::Key_Backspace
         && keyEvent.type() == QEvent::KeyPress) {
-        QString surrString(widgetState[SurroundingTextAttribute].toString());
-        const int cursorPosition(widgetState[CursorPositionAttribute].toInt());
+        QString surrString(mWidgetState[SurroundingTextAttribute].toString());
+        const int cursorPosition(mWidgetState[CursorPositionAttribute].toInt());
         bool validAnchor(false);
 
         if (!surrString.isEmpty()
@@ -422,9 +423,9 @@ void MInputContextConnection::sendKeyEvent(const QKeyEvent &keyEvent,
             // we don't support selections
             && anchorPosition(validAnchor) == cursorPosition
             && validAnchor) {
-            widgetState[SurroundingTextAttribute] = surrString.remove(cursorPosition - 1, 1);
-            widgetState[CursorPositionAttribute] = cursorPosition - 1;
-            widgetState[AnchorPositionAttribute] = cursorPosition - 1;
+            mWidgetState[SurroundingTextAttribute] = surrString.remove(cursorPosition - 1, 1);
+            mWidgetState[CursorPositionAttribute] = cursorPosition - 1;
+            mWidgetState[AnchorPositionAttribute] = cursorPosition - 1;
         }
     }
 }
@@ -550,4 +551,44 @@ void MInputContextConnection::pluginSettingsLoaded(int clientId, const QList<MIm
     Q_UNUSED(info);
 
     // empty default implementation
+}
+
+
+QVariantMap MInputContextConnection::widgetState() const
+{
+    return mWidgetState;
+}
+
+QVariant MInputContextConnection::inputMethodQuery(Qt::InputMethodQuery query, const QVariant &argument) const
+{
+    switch (query) {
+        case Qt::ImEnabled:
+            return mWidgetState.value(QStringLiteral("focusState"));
+        case Qt::ImCursorRectangle:
+            return mWidgetState.value(QStringLiteral("cursorRectangle"));
+//        case Qt::ImFont:
+//            return QVariant();
+        case Qt::ImCursorPosition:
+            return mWidgetState.value(QStringLiteral("cursorPosition"));
+        case Qt::ImSurroundingText:
+            return mWidgetState.value(QStringLiteral("surroundingText"));
+        case Qt::ImCurrentSelection:
+            return QVariant(); // TODO implement
+//        case Qt::ImMaximumTextLength:
+        case Qt::ImAnchorPosition:
+            return mWidgetState.value(QStringLiteral("anchorPosition"));
+        case Qt::ImHints:
+            return mWidgetState.value(QStringLiteral("maliit-inputmethod-hints"));
+//        case Qt::ImPreferredLanguage:
+//        case Qt::ImAbsolutePosition:
+//        case Qt::ImTextBeforeCursor:
+//        case Qt::ImTextAfterCursor:
+        case Qt::ImEnterKeyType:
+            return mWidgetState.value(QStringLiteral("enterKeyType"));
+//        case Qt::ImAnchorRectangle:
+//        case Qt::ImInputItemClipRectangle:
+//            return QVariant();
+    }
+    return QVariant();
+
 }

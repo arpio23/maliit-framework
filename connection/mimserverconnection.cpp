@@ -43,8 +43,7 @@ void MImServerConnection::setPreedit(const QString &text, int cursorPos)
     Q_UNUSED(cursorPos);
 }
 
-void MImServerConnection::updateWidgetInformation(const QMap<QString, QVariant> &stateInformation,
-                                                    bool focusChanged)
+void MImServerConnection::updateWidgetInformation(const QMap<QString, QVariant> &stateInformation, bool focusChanged)
 {
     Q_UNUSED(stateInformation);
     Q_UNUSED(focusChanged);
@@ -77,10 +76,10 @@ void MImServerConnection::setCopyPasteState(bool copyAvailable, bool pasteAvaila
 }
 
 void MImServerConnection::processKeyEvent(QEvent::Type keyType, Qt::Key keyCode,
-                                            Qt::KeyboardModifiers modifiers,
-                                            const QString &text, bool autoRepeat, int count,
-                                            quint32 nativeScanCode, quint32 nativeModifiers,
-                                            unsigned long time)
+                                          Qt::KeyboardModifiers modifiers,
+                                          const QString &text, bool autoRepeat, int count,
+                                          quint32 nativeScanCode, quint32 nativeModifiers,
+                                          unsigned long time)
 {
     Q_UNUSED(keyType);
     Q_UNUSED(keyCode);
@@ -105,7 +104,7 @@ void MImServerConnection::unregisterAttributeExtension(int id)
 }
 
 void MImServerConnection::setExtendedAttribute(int id, const QString &target, const QString &targetItem,
-                                                 const QString &attribute, const QVariant &value)
+                                               const QString &attribute, const QVariant &value)
 {
     Q_UNUSED(id);
     Q_UNUSED(target);

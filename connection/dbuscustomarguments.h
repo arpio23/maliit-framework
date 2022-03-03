@@ -16,10 +16,14 @@
 
 class MImPluginSettingsEntry;
 class MImPluginSettingsInfo;
+
+#include <maliit/namespace.h>
+
+#include <QtCore/qnamespace.h>
+
+QT_BEGIN_NAMESPACE
 class QDBusArgument;
 class QVariant;
-
-
 // MImPluginSettingsEntry marshalling
 QDBusArgument &operator<<(QDBusArgument &argument, const MImPluginSettingsEntry &entry);
 const QDBusArgument &operator>>(const QDBusArgument &argument, MImPluginSettingsEntry &entry);
@@ -27,5 +31,9 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, MImPluginSettings
 // MImPluginSettingsInfo marshalling
 QDBusArgument &operator<<(QDBusArgument &argument, const MImPluginSettingsInfo &info);
 const QDBusArgument &operator>>(const QDBusArgument &argument, MImPluginSettingsInfo &info);
+
+QDBusArgument &operator<<(QDBusArgument &arg, const Maliit::PreeditTextFormat &format);
+const QDBusArgument &operator>>(const QDBusArgument &arg, Maliit::PreeditTextFormat &format);
+QT_END_NAMESPACE
 
 #endif // DBUSCUSTOMARGUMENTS_H

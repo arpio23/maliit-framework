@@ -44,17 +44,16 @@ void Ft_ExamplePlugin::cleanup()
 void Ft_ExamplePlugin::testFunction_data()
 {
     QTest::addColumn<QString>("testPluginPath");
-    QTest::newRow("Hello world")
-        << "helloworld/libcxxhelloworldplugin.so";
-    QTest::newRow("Override")
-        << "override/libcxxoverrideplugin.so";
+//    QTest::newRow("Hello world")
+//        << "helloworld/libcxxhelloworldplugin.so";
+//    QTest::newRow("Override")
+//        << "override/libcxxoverrideplugin.so";
 }
 
 void Ft_ExamplePlugin::testFunction()
 {
+    QSKIP("Currently there are no example plugins to test");
     QFETCH(QString, testPluginPath);
-
-    MIndicatorServiceClient fakeService;
 
     const QDir pluginDir = MaliitTestUtils::isTestingInSandbox() ?
                 QDir(IN_TREE_TEST_PLUGIN_DIR"/cxx") : QDir(MALIIT_TEST_PLUGINS_DIR"/examples/cxx");
@@ -69,7 +68,7 @@ void Ft_ExamplePlugin::testFunction()
     Maliit::Plugins::InputMethodPlugin *plugin =  qobject_cast<Maliit::Plugins::InputMethodPlugin *>(pluginInstance);
     QVERIFY(plugin != 0);
 
-    MaliitTestUtils::TestInputMethodHost host(fakeService, pluginId, plugin->name());
+    MaliitTestUtils::TestInputMethodHost host(pluginId, plugin->name());
     plugin->createInputMethod(&host);
 
     QCOMPARE(host.lastCommit, QString("Maliit"));

@@ -16,10 +16,9 @@
 #include "core-utils.h"
 #include "gui-utils.h"
 
-#include <minputmethodquickplugin.h>
-#include <minputmethodquick.h>
+#include <quick/inputmethodquickplugin.h>
+#include <quick/inputmethodquick.h>
 #include <minputmethodhost.h>
-#include <maliitquickpluginfactory.h>
 #include <QtCore>
 #include <QtGui>
 
@@ -45,10 +44,13 @@ void Ut_MInputMethodQuickPlugin::testQmlSetup_data()
     QTest::addColumn<QString>("testPluginPath");
     QTest::newRow("Hello world")
         << "helloworld/helloworld.qml";
+// TODO Adapt plugins for Qt 5
+#if 0
     QTest::newRow("Cycle keys")
         << "cyclekeys/libqmlcyclekeysplugin.so";
     QTest::newRow("Override")
         << "override/libqmloverrideplugin.so";
+#endif
 }
 
 /* This test currently tests both the qml example found in examples/
@@ -57,7 +59,6 @@ void Ut_MInputMethodQuickPlugin::testQmlSetup_data()
  * things tested in separate tests. */
 void Ut_MInputMethodQuickPlugin::testQmlSetup()
 {
-    MIndicatorServiceClient fakeService;
     QFETCH(QString, testPluginPath);
 
     const QDir pluginDir = MaliitTestUtils::isTestingInSandbox() ?
@@ -70,24 +71,25 @@ void Ut_MInputMethodQuickPlugin::testQmlSetup()
     Maliit::Plugins::InputMethodPlugin *plugin = 0;
 
     if (pluginPath.endsWith(".qml")) {
-        MaliitQuickPluginFactory factory;
-        plugin = factory.create(pluginPath);
+        plugin = new Maliit::InputMethodQuickPlugin(pluginPath,
+                                                    QSharedPointer<Maliit::AbstractPlatform>(new Maliit::UnknownPlatform));
     } else {
         QPluginLoader loader(pluginPath);
         pluginInstance = loader.instance();
         QVERIFY(pluginInstance != 0);
-        plugin =  qobject_cast<Maliit::Plugins::InputMethodPlugin *>(pluginInstance);
+        plugin = qobject_cast<Maliit::Plugins::InputMethodPlugin *>(pluginInstance);
     }
 
     QVERIFY(plugin != 0);
 
-    MaliitTestUtils::TestInputMethodHost host(fakeService, pluginId, plugin->name());
-    MInputMethodQuick *testee = static_cast<MInputMethodQuick *>(
+    MaliitTestUtils::TestInputMethodHost host(pluginId, plugin->name());
+    Maliit::InputMethodQuick *testee = static_cast<Maliit::InputMethodQuick *>(
         plugin->createInputMethod(&host));
 
     QVERIFY(not testee->inputMethodArea().isEmpty());
-    QCOMPARE(testee->inputMethodArea(), QRectF(0, testee->screenHeight() * 0.5,
-                                               testee->screenWidth(), testee->screenHeight() * 0.5));
+    QCOMPARE(testee->inputMethodArea(),
+             QRectF(0, qRound(testee->screenHeight() * 0.5),
+                    testee->screenWidth(), qRound(testee->screenHeight() * 0.5)));
 
     QCOMPARE(host.lastCommit, QString("Maliit"));
     QCOMPARE(host.sendCommitCount, 1);
