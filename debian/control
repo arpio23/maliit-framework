@@ -108,4 +108,9 @@ Depends: maliit-framework, ${misc:Depends}
 Architecture: all
 Section: doc
 Description: docs for Maliit framework
- Documentation for the framework of Maliit
+ Maliit provides a flexible and cross-platform input method framework. It has a
+ plugin-based client-server architecture where applications act as clients and
+ communicate with the Maliit server via input context plugins. The communication
+ link currently uses D-Bus.
+ .
+ Documentation for the framework of Maliit.
