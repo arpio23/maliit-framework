@@ -106,6 +106,6 @@ Description: Maliit Input Method Framework - GLib Development Headers
 Package: maliit-framework-doc
 Depends: maliit-framework, ${misc:Depends}
 Architecture: all
-Section: docs
+Section: doc
 Description: docs for Maliit framework
  Documentation for the framework of Maliit
