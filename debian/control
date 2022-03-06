@@ -24,7 +24,7 @@ Build-Depends: cmake,
                qtwayland5-dev-tools,
                qtwayland5-private-dev,
                wayland-protocols
-Standards-Version: 4.5.1
+Standards-Version: 4.6.0
 Homepage: https://github.com/maliit/framework
 Vcs-Browser: https://salsa.debian.org/qt-kde-team/extras/maliit-framework
 Vcs-Git: https://salsa.debian.org/qt-kde-team/extras/maliit-framework.git
