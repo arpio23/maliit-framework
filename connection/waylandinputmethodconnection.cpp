@@ -2,7 +2,6 @@
  *
  * Copyright (C) 2012 Canonical Ltd
  *
- * Contact: maliit-discuss@lists.maliit.org
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,7 +18,7 @@
 
 #include "wayland-client.h"
 #include <qwayland-input-method-unstable-v1.h>
-#include <qwayland-text-input-unstable-v1.h>
+#include <QtWaylandClient/private/qwayland-text-input-unstable-v2.h>
 
 #include <xkbcommon/xkbcommon.h>
 
@@ -57,6 +56,7 @@ QByteArray modifiersMap()
     QByteArray mod_map;
     for (unsigned int iter(0); iter < (sizeof(modifiers) / sizeof(modifiers[0])); ++iter) {
         mod_map.append(modifiers[iter].second);
+        mod_map.append('\0');
     }
     return mod_map;
 }
@@ -81,10 +81,18 @@ xkb_mod_mask_t modifiersFromQt(const Qt::KeyboardModifiers qt_mods)
 xkb_keysym_t keyFromQt(int qt_key)
 {
     switch (qt_key) {
+    case Qt::Key_Escape:
+        return XKB_KEY_Escape;
+    case Qt::Key_Tab:
+        return XKB_KEY_Tab;
     case Qt::Key_Backspace:
         return XKB_KEY_BackSpace;
     case Qt::Key_Return:
         return XKB_KEY_Return;
+    case Qt::Key_Home:
+        return XKB_KEY_Home;
+    case Qt::Key_End:
+        return XKB_KEY_End;
     case Qt::Key_Left:
         return XKB_KEY_Left;
     case Qt::Key_Up:
@@ -93,41 +101,49 @@ xkb_keysym_t keyFromQt(int qt_key)
         return XKB_KEY_Right;
     case Qt::Key_Down:
         return XKB_KEY_Down;
+    case Qt::Key_PageUp:
+        return XKB_KEY_Prior;
+    case Qt::Key_PageDown:
+        return XKB_KEY_Next;
     default:
+        if (qt_key >= Qt::Key_Space && qt_key <= Qt::Key_ydiaeresis) {
+            return qt_key;
+        }
         return XKB_KEY_NoSymbol;
     }
 }
 
-QtWayland::zwp_text_input_v1::preedit_style preeditStyleFromMaliit(Maliit::PreeditFace face)
+QtWayland::zwp_text_input_v2::preedit_style preeditStyleFromMaliit(Maliit::PreeditFace face)
 {
     switch (face) {
     case Maliit::PreeditDefault:
-        return QtWayland::zwp_text_input_v1::preedit_style_default;
+        return QtWayland::zwp_text_input_v2::preedit_style_default;
     case Maliit::PreeditNoCandidates:
-        return QtWayland::zwp_text_input_v1::preedit_style_incorrect;
+        return QtWayland::zwp_text_input_v2::preedit_style_incorrect;
     case Maliit::PreeditKeyPress:
-        return QtWayland::zwp_text_input_v1::preedit_style_highlight;
+        return QtWayland::zwp_text_input_v2::preedit_style_highlight;
     case Maliit::PreeditUnconvertible:
-        return QtWayland::zwp_text_input_v1::preedit_style_inactive;
+        return QtWayland::zwp_text_input_v2::preedit_style_inactive;
     case Maliit::PreeditActive:
-        return QtWayland::zwp_text_input_v1::preedit_style_active;
+        return QtWayland::zwp_text_input_v2::preedit_style_active;
     default:
-        return QtWayland::zwp_text_input_v1::preedit_style_none;
+        return QtWayland::zwp_text_input_v2::preedit_style_none;
     }
 }
 
 Maliit::TextContentType contentTypeFromWayland(uint32_t purpose)
 {
     switch (purpose) {
-    case QtWayland::zwp_text_input_v1::content_purpose_normal:
+    case QtWayland::zwp_text_input_v2::content_purpose_normal:
         return Maliit::FreeTextContentType;
-    case QtWayland::zwp_text_input_v1::content_purpose_number:
+    case QtWayland::zwp_text_input_v2::content_purpose_digits:
+    case QtWayland::zwp_text_input_v2::content_purpose_number:
         return Maliit::NumberContentType;
-    case QtWayland::zwp_text_input_v1::content_purpose_phone:
+    case QtWayland::zwp_text_input_v2::content_purpose_phone:
         return Maliit::PhoneNumberContentType;
-    case QtWayland::zwp_text_input_v1::content_purpose_url:
+    case QtWayland::zwp_text_input_v2::content_purpose_url:
         return Maliit::UrlContentType;
-    case QtWayland::zwp_text_input_v1::content_purpose_email:
+    case QtWayland::zwp_text_input_v2::content_purpose_email:
         return Maliit::EmailContentType;
     default:
         return Maliit::CustomContentType;
@@ -328,7 +344,7 @@ void WaylandInputMethodConnection::sendPreeditString(const QString &string,
     }
 
     Q_FOREACH (const Maliit::PreeditTextFormat& format, preedit_formats) {
-        QtWayland::zwp_text_input_v1::preedit_style style = preeditStyleFromMaliit(format.preeditFace);
+        QtWayland::zwp_text_input_v2::preedit_style style = preeditStyleFromMaliit(format.preeditFace);
         uint32_t index = string.leftRef(format.start).toUtf8().size();
         uint32_t length = string.leftRef(format.start + format.length).toUtf8().size() - index;
         qCDebug(lcWaylandConnection) << Q_FUNC_INFO << "preedit_styling" << index << length;
@@ -547,10 +563,10 @@ void InputMethodContext::zwp_input_method_context_v1_content_type(uint32_t hint,
     qCDebug(lcWaylandConnection) << Q_FUNC_INFO;
 
     m_stateInfo[ContentTypeAttribute] = contentTypeFromWayland(purpose);
-    m_stateInfo[AutoCapitalizationAttribute] = matchesFlag(hint, QtWayland::zwp_text_input_v1::content_hint_auto_capitalization);
-    m_stateInfo[CorrectionAttribute] = matchesFlag(hint, QtWayland::zwp_text_input_v1::content_hint_auto_correction);
-    m_stateInfo[PredictionAttribute] = matchesFlag(hint, QtWayland::zwp_text_input_v1::content_hint_auto_completion);
-    m_stateInfo[HiddenTextAttribute] = matchesFlag(hint, QtWayland::zwp_text_input_v1::content_hint_hidden_text);
+    m_stateInfo[AutoCapitalizationAttribute] = matchesFlag(hint, QtWayland::zwp_text_input_v2::content_hint_auto_capitalization);
+    m_stateInfo[CorrectionAttribute] = matchesFlag(hint, QtWayland::zwp_text_input_v2::content_hint_auto_correction);
+    m_stateInfo[PredictionAttribute] = matchesFlag(hint, QtWayland::zwp_text_input_v2::content_hint_auto_completion);
+    m_stateInfo[HiddenTextAttribute] = matchesFlag(hint, QtWayland::zwp_text_input_v2::content_hint_hidden_text);
 }
 
 void InputMethodContext::zwp_input_method_context_v1_invoke_action(uint32_t button, uint32_t index)
@@ -568,6 +584,7 @@ void InputMethodContext::zwp_input_method_context_v1_reset()
     qCDebug(lcWaylandConnection) << Q_FUNC_INFO;
 
     m_connection->reset(wayland_connection_id);
+    m_connection->showInputMethod(wayland_connection_id);
 }
 
 void InputMethodContext::zwp_input_method_context_v1_surrounding_text(const QString &text, uint32_t cursor, uint32_t anchor)

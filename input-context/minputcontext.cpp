@@ -6,7 +6,6 @@
  *
  * All rights reserved.
  *
- * Contact: maliit-discuss@lists.maliit.org
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,10 +24,21 @@
 #include <QDebug>
 #include <QByteArray>
 #include <QRectF>
+#include <QScreen>
 #include <QLocale>
 #include <QWindow>
 #include <QSharedDataPointer>
 #include <QQuickItem>
+
+// includes needed to load input context plugin
+#include <qpa/qplatforminputcontextfactory_p.h>
+#include <qpa/qplatforminputcontextplugin_p.h>
+#include <qpa/qplatforminputcontext.h>
+#include "private/qfactoryloader_p.h"
+
+Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
+  (QPlatformInputContextFactoryInterface_iid, QLatin1String("/platforminputcontexts"), 
+   Qt::CaseInsensitive))
 
 namespace
 {
@@ -37,22 +47,8 @@ namespace
 
     int orientationAngle(Qt::ScreenOrientation orientation)
     {
-        // Maliit uses orientations relative to screen, Qt relative to world
-        // Note: doesn't work with inverted portrait or landscape as native screen orientation.
-        static bool portraitRotated = qGuiApp->primaryScreen()->primaryOrientation() == Qt::PortraitOrientation;
-
-        switch (orientation) {
-        case Qt::PrimaryOrientation: // Urgh.
-        case Qt::PortraitOrientation:
-            return portraitRotated ? MInputContext::Angle0 : MInputContext::Angle270;
-        case Qt::LandscapeOrientation:
-            return portraitRotated ? MInputContext::Angle90 : MInputContext::Angle0;
-        case Qt::InvertedPortraitOrientation:
-            return portraitRotated ? MInputContext::Angle180 : MInputContext::Angle90;
-        case Qt::InvertedLandscapeOrientation:
-            return portraitRotated ? MInputContext::Angle270 : MInputContext::Angle180;
-        }
-        return MInputContext::Angle0;
+        QScreen *screen = qGuiApp->primaryScreen();
+        return screen->angleBetween(screen->primaryOrientation(), orientation);
     }
 }
 
@@ -65,7 +61,9 @@ MInputContext::MInputContext()
       inputPanelState(InputPanelHidden),
       preeditCursorPos(-1),
       redirectKeys(false),
-      currentFocusAcceptsInput(false)
+      currentFocusAcceptsInput(false),
+      composeInputContext(qLoadPlugin<QPlatformInputContext, QPlatformInputContextPlugin>
+                          (loader(), "compose", QStringList()))
 {
     QByteArray debugEnvVar = qgetenv("MALIIT_DEBUG");
     if (!debugEnvVar.isEmpty() && debugEnvVar != "0") {
@@ -94,6 +92,7 @@ MInputContext::MInputContext()
 MInputContext::~MInputContext()
 {
     delete imServer;
+    if (composeInputContext) delete composeInputContext;
 }
 
 void MInputContext::connectInputMethodServer()
@@ -165,6 +164,7 @@ void MInputContext::setLanguage(const QString &language)
 
 void MInputContext::reset()
 {
+    if (composeInputContext) composeInputContext->reset();
     if (debug) qDebug() << InputContextName << "in" << __PRETTY_FUNCTION__;
 
     const bool hadPreedit = !preedit.isEmpty();
@@ -240,6 +240,7 @@ void MInputContext::invokeAction(QInputMethod::Action action, int x)
 
 void MInputContext::update(Qt::InputMethodQueries queries)
 {
+    if (composeInputContext) composeInputContext->update(queries);
     if (debug) qDebug() << InputContextName << "in" << __PRETTY_FUNCTION__;
 
     Q_UNUSED(queries) // fetching everything
@@ -276,6 +277,7 @@ void MInputContext::updateServerOrientation(Qt::ScreenOrientation orientation)
 
 void MInputContext::setFocusObject(QObject *focused)
 {
+    if (composeInputContext) composeInputContext->setFocusObject(focused);
     if (debug) qDebug() << InputContextName << "in" << __PRETTY_FUNCTION__ << focused;
 
     updateInputMethodExtensions();
@@ -301,6 +303,9 @@ void MInputContext::setFocusObject(QObject *focused)
     if (!active && currentFocusAcceptsInput) {
         imServer->activateContext();
         active = true;
+    }
+
+    if (newFocusWindow && currentFocusAcceptsInput) {
         updateServerOrientation(newFocusWindow->contentOrientation());
     }
 
@@ -324,6 +329,11 @@ QString MInputContext::preeditString()
 bool MInputContext::filterEvent(const QEvent *event)
 {
     bool eaten = false;
+    bool eatenByCompose = false;
+
+    if (composeInputContext) { 
+        eatenByCompose = composeInputContext->filterEvent(event);
+    }
 
     switch (event->type()) {
 
@@ -347,7 +357,7 @@ bool MInputContext::filterEvent(const QEvent *event)
         break;
     }
 
-    return eaten;
+    return eaten || eatenByCompose;
 }
 
 QRectF MInputContext::keyboardRect() const
@@ -412,10 +422,14 @@ void MInputContext::sendHideInputMethod()
 
 void MInputContext::activationLostEvent()
 {
+    if (debug) qDebug() << InputContextName << "in" << __PRETTY_FUNCTION__;
+
     // This method is called when activation was gracefully lost.
     // There is similar cleaning up done in onDBusDisconnection.
     active = false;
     inputPanelState = InputPanelHidden;
+
+    updateInputMethodArea(QRect());
 }
 
 
@@ -427,7 +441,7 @@ void MInputContext::imInitiatedHide()
 
     // remove focus on QtQuick2
     QQuickItem *inputItem = qobject_cast<QQuickItem*>(QGuiApplication::focusObject());
-    if (inputItem) {
+    if (inputItem && inputItem->flags().testFlag(QQuickItem::ItemAcceptsInputMethod)) {
         inputItem->setFocus(false);
     }
 
@@ -833,6 +847,9 @@ int MInputContext::cursorStartPosition(bool *valid)
 void MInputContext::updateInputMethodExtensions()
 {
     if (!inputMethodAccepted()) {
+        return;
+    }
+    if (!qGuiApp->focusObject()) {
         return;
     }
     if (debug) qDebug() << InputContextName << __PRETTY_FUNCTION__;

@@ -2,7 +2,6 @@
  *
  * Copyright (C) 2012 One Laptop per Child Association
  *
- * Contact: maliit-discuss@lists.maliit.org
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,7 +42,8 @@ struct _MaliitInputMethodPrivate
     MaliitServer *maliit_proxy;
 };
 
-G_DEFINE_TYPE (MaliitInputMethod, maliit_input_method, G_TYPE_OBJECT)
+G_DEFINE_TYPE_WITH_CODE (MaliitInputMethod, maliit_input_method, G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (MaliitInputMethod))
 
 enum
 {
@@ -114,8 +114,6 @@ maliit_input_method_class_init (MaliitInputMethodClass *input_method_class)
                       G_TYPE_INT,
                       G_TYPE_INT,
                       G_TYPE_INT);
-
-    g_type_class_add_private (input_method_class, sizeof (MaliitInputMethodPrivate));
 }
 
 static gboolean
@@ -137,9 +135,7 @@ update_input_method_area(MaliitInputMethod *input_method,
 static void
 maliit_input_method_init (MaliitInputMethod *input_method)
 {
-    MaliitInputMethodPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (input_method,
-                                                                  MALIIT_TYPE_INPUT_METHOD,
-                                                                  MaliitInputMethodPrivate);
+    MaliitInputMethodPrivate *priv = maliit_input_method_get_instance_private (input_method);
     MaliitContext *context;
     GError *error = NULL;
 

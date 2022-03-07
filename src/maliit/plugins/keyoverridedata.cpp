@@ -3,7 +3,6 @@
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  * All rights reserved.
  *
- * Contact: maliit-discuss@lists.maliit.org
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,7 +34,7 @@ MKeyOverrideData::~MKeyOverrideData()
 QList<QSharedPointer<MKeyOverride> > MKeyOverrideData::keyOverrides() const
 {
     QList<QSharedPointer<MKeyOverride> > results = mKeyOverrides.values();
-    qSort(results.begin(), results.end(), keyOverrideLessThan);
+    std::sort(results.begin(), results.end(), keyOverrideLessThan);
     return results;
 }
 

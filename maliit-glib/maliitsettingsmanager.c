@@ -2,7 +2,6 @@
  *
  * Copyright (C) 2012 Canonical Ltd
  *
- * Contact: maliit-discuss@lists.maliit.org
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -46,7 +45,8 @@ struct _MaliitSettingsManagerPrivate
     guint attribute_changed_signal_id;
 };
 
-G_DEFINE_TYPE (MaliitSettingsManager, maliit_settings_manager, G_TYPE_OBJECT)
+G_DEFINE_TYPE_WITH_CODE (MaliitSettingsManager, maliit_settings_manager,
+                         G_TYPE_OBJECT, G_ADD_PRIVATE (MaliitSettingsManager))
 
 enum
 {
@@ -152,8 +152,6 @@ maliit_settings_manager_class_init (MaliitSettingsManagerClass *manager_class)
                       g_cclosure_marshal_VOID__VOID,
                       G_TYPE_NONE,
                       0);
-
-    g_type_class_add_private (manager_class, sizeof (MaliitSettingsManagerPrivate));
 }
 
 static void
@@ -255,9 +253,7 @@ connection_established (GObject      *source_object G_GNUC_UNUSED,
 static void
 maliit_settings_manager_init (MaliitSettingsManager *manager)
 {
-    MaliitSettingsManagerPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (manager,
-                                                                      MALIIT_TYPE_SETTINGS_MANAGER,
-                                                                      MaliitSettingsManagerPrivate);
+    MaliitSettingsManagerPrivate *priv = maliit_settings_manager_get_instance_private (manager);
     MaliitContext *context;
     GError *error = NULL;
 

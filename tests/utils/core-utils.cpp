@@ -3,7 +3,6 @@
  * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
  * All rights reserved.
  *
- * Contact: maliit-discuss@lists.maliit.org
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -126,13 +125,4 @@ void waitForSignal(const QObject* object, const char* signal, int timeout)
     eventLoop.exec();
 }
 
-void waitAndProcessEvents(int waitTime)
-{
-    QTest::qWait(waitTime);
-    while (QCoreApplication::instance()->hasPendingEvents()) {
-        QCoreApplication::instance()->processEvents();
-    }
 }
-
-}
-

@@ -2,7 +2,6 @@
  *
  * Copyright (C) 2012 Canonical Ltd
  *
- * Contact: maliit-discuss@lists.maliit.org
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,7 +42,8 @@ struct _MaliitPluginSettingsPrivate
     GPtrArray *entries;
 };
 
-G_DEFINE_TYPE (MaliitPluginSettings, maliit_plugin_settings, G_TYPE_OBJECT)
+G_DEFINE_TYPE_WITH_CODE (MaliitPluginSettings, maliit_plugin_settings,
+                         G_TYPE_OBJECT, G_ADD_PRIVATE (MaliitPluginSettings))
 
 enum
 {
@@ -230,16 +230,12 @@ maliit_plugin_settings_class_init (MaliitPluginSettingsClass *settings_class)
                                                          G_PARAM_STATIC_NAME |
                                                          G_PARAM_STATIC_BLURB |
                                                          G_PARAM_STATIC_NICK));
-
-    g_type_class_add_private (settings_class, sizeof (MaliitPluginSettingsPrivate));
 }
 
 static void
 maliit_plugin_settings_init (MaliitPluginSettings *settings)
 {
-    MaliitPluginSettingsPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (settings,
-                                                                     MALIIT_TYPE_PLUGIN_SETTINGS,
-                                                                     MaliitPluginSettingsPrivate);
+    MaliitPluginSettingsPrivate *priv = maliit_plugin_settings_get_instance_private (settings);
 
     priv->description_language = NULL;
     priv->plugin_name = NULL;
