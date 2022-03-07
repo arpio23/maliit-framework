@@ -30,8 +30,8 @@ Build-Depends: cmake,
                xvfb,
 Standards-Version: 4.6.0
 Homepage: https://github.com/maliit/framework
-Vcs-Browser: https://salsa.debian.org/qt-kde-team/extras/maliit-framework
-Vcs-Git: https://salsa.debian.org/qt-kde-team/extras/maliit-framework.git
+Vcs-Browser: https://salsa.debian.org/debian/maliit-framework
+Vcs-Git: https://salsa.debian.org/debian/maliit-framework.git
 Rules-Requires-Root: no
 
 Package: maliit-framework
