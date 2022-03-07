@@ -1,6 +1,52 @@
-maliit-framework (2.0.0-1) UNRELEASED; urgency=medium
+maliit-framework (2.2.0-1) UNRELEASED; urgency=medium
 
   [ Norbert Preining ]
-  * First upload to Debian. (Closes: #991528).
+  * Prepare initial packaging of v2.0.0.
 
- -- Mike Gabriel <sunweaver@debian.org>  Sat, 26 Jun 2021 09:15:02 +0900
+  [ Mike Gabriel ]
+  * Initial upload to Debian. (Closes: #991528).
+  * debian/patches/qtwaylandscanner-path.diff:
+    + Trivial rebase.
+  * debian/control:
+    + Drop dbg:pkg.
+    + Fix Section: field: docs -> doc.
+    + Bump Standards-Version: to 4.6.0. No changes needed.
+    + More proper LONG_DESCRIPTION for the doc:pkg.
+    + Add B-D: graphviz (dot executable required by Doxygen).
+    + Switch Priority: from extra to optional.
+    + Adjust Vcs-*: fields. Plan is to (co-)maintain the src:pkg with the Qt/KDE
+      team in group Debian on salsa.debian.org.
+    + Don't reference bin:pkgs not shipped in this src:pkg via ${source:Version}
+      in B:/R: relations.
+    + Wrap Depends: fields into multi-line fields.
+    + Some Section: field adjustments. Thanks, lintian.
+  * debian/{control,maliit-framework-doc.links}:
+    + Add D (doc:pkg): libjs-jquery and symlink to it.
+  * debian/rules:
+    + Add get-orig-source target (for the maintainer's convenience).
+    + Drop DEB_LDFLAGS_MAIN_APPEND variable.
+    + Move API docs to /usr/share/doc/maliit-framework/html. Drop file with
+      LGPL license text.
+    + Enable all hardening flags.
+    + Various fine-tuning adjustments of the maliit-framework-doc bin:pkg.
+  * debian/{rules,control}:
+    + Use pkg-kde-tools' symbolshelper script for maintaining .symbols files.
+    + Add B-Ds xvfb and xauth and re-enable unit tests wrapped by xvfb-run.
+  * debian/*.symbols:
+    + Add .symbols files.
+  * debian/upstream/metadata:
+    + Add file. Comply with DEP-12.
+  * debian/maliit-framework-doc.examples:
+    + Add file. Include example files in doc:pkg.
+  * debian/copyright:
+    + Use secure URL in Format: field.
+    + Add auto-generated copyright.in file.
+    + Update copyright attributions.
+  * debian/maliit-framework-doc.doc-base:
+    + Add file.
+  * debian/maliit-framework-doc.install:
+    + Drop /usr/share/doc/maliit-framework-doc.
+  * debian/source/lintian-overrides:
+    + Override awkward text layout in LICENSE.LGPL.
+
+ -- Mike Gabriel <sunweaver@debian.org>  Mon, 07 Mar 2022 08:36:22 +0100
