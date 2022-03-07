@@ -120,7 +120,7 @@ License: GNU Lesser General Public License, Version 2.1
 Files: CMakeLists.txt
  INSTALL.local
  NEWS
- README
+ README.md
  cmake/ECMFindModuleHelpers.cmake
  cmake/FindGIO.cmake
  cmake/FindGLib2.cmake
@@ -131,16 +131,17 @@ Files: CMakeLists.txt
  connection/org.maliit.server.service.in
  dbus_interfaces/minputmethodcontext1interface.xml
  dbus_interfaces/minputmethodserver1interface.xml
- debian/changelog
  debian/control
- debian/files
  debian/libmaliit-glib-dev.install
  debian/libmaliit-glib2.install
+ debian/libmaliit-glib2.symbols
  debian/libmaliit-plugins2.install
+ debian/libmaliit-plugins2.symbols
  debian/maliit-framework-dev.install
  debian/maliit-framework-doc.doc-base
  debian/maliit-framework-doc.examples
  debian/maliit-framework-doc.install
+ debian/maliit-framework-doc.links
  debian/maliit-framework.install
  debian/maliit-framework.maintscript
  debian/maliit-framework.postinst
@@ -354,17 +355,13 @@ Copyright: 2011, Nokia Corporation and/or its subsidiary(-ies).
 License: GNU Lesser General Public License, Version 2.1
  FIXME
 
-Files: debian/copyright
-Copyright: -format/1.0/
-  2012, Mattia Barbon <mattia@develer.com>
-  2013, Canonical Ltd
-  2013, Jolla Ltd
-  2013, Openismus GmbH
-License: NTP License (legal disclaimer)
- FIXME
-
 Files: doc/src/footer.html
 Copyright: 2011, Nokia Corporation</td>
+License: UNKNOWN
+ FIXME
+
+Files: debian/copyright
+Copyright: -format/1.0/
 License: UNKNOWN
  FIXME
 
@@ -377,6 +374,11 @@ License: UNKNOWN
 Files: cmake/FindWayland.cmake
 Copyright: Text: 2014 Alex Merry <alex.merry@kde.org>
   Text: 2014 Martin GrÃ¤Ãlin <mgraesslin@kde.org>
+License: UNKNOWN
+ FIXME
+
+Files: debian/changelog
+Copyright: attributions.
 License: UNKNOWN
  FIXME
 
