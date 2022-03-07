@@ -1,18 +1,19 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.5)
 
-project(maliit-framework VERSION 2.0.0)
+project(maliit-framework VERSION 2.1.1)
 
 # Build options
 
 option(enable-docs "Build documentation" ON)
 option(enable-tests "Build tests" ON)
+option(enable-examples "Build examples" OFF)
 
 option(enable-glib "Build GLib support" ON)
 
 option(enable-xcb "Compile with xcb support" ON)
 option(enable-wayland "Compile with support for wayland" ON)
 option(enable-wayland-gtk "Compile with support for wayland gtk+" OFF)
-option(enable-qt5-inputcontext "Compile with Qt5 input context" ON)
+option(enable-qt5-inputcontext "Compile with Qt 5 input context" ON)
 
 option(enable-hwkeyboard "Enable support for the hardware keyboard" ON)
 option(enable-dbus-activation "Enable dbus activation support for maliit-server" OFF)
@@ -32,7 +33,7 @@ endif()
 
 if(NOT DEFINED GTK3_PLUGINS_INSTALL_DIR)
     set(GTK3_PLUGINS_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/gtk-3.0/3.0.0" CACHE PATH
-            "Installation directory for Gtk+ 3 plugins [LIB_INSTALL_DIR/gtk-3.0/3.0.0]")
+            "Installation directory for Gtk 3 plugins [LIB_INSTALL_DIR/gtk-3.0/3.0.0]")
 endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
@@ -46,7 +47,6 @@ find_package(Qt5Core)
 find_package(Qt5DBus)
 find_package(Qt5Gui REQUIRED PRIVATE)
 find_package(Qt5Quick)
-find_package(Qt5Widgets)
 
 if(enable-wayland)
     find_package(WaylandProtocols REQUIRED PRIVATE)
@@ -92,7 +92,6 @@ if(enable-wayland)
          connection/waylandinputmethodconnection.h)
 
     ecm_add_qtwayland_client_protocol(CONNECTION_SOURCES PROTOCOL ${WAYLANDPROTOCOLS_PATH}/unstable/input-method/input-method-unstable-v1.xml BASENAME input-method-unstable-v1)
-    ecm_add_qtwayland_client_protocol(CONNECTION_SOURCES PROTOCOL ${WAYLANDPROTOCOLS_PATH}/unstable/text-input/text-input-unstable-v1.xml BASENAME text-input-unstable-v1)
 
     add_definitions(-DHAVE_WAYLAND)
 endif()
@@ -110,6 +109,7 @@ add_library(maliit-connection STATIC ${CONNECTION_SOURCES})
 target_link_libraries(maliit-connection Qt5::Core Qt5::DBus Qt5::Gui maliit-common)
 if(enable-wayland)
     target_link_libraries(maliit-connection Wayland::Client PkgConfig::XKBCOMMON)
+    target_include_directories(maliit-connection PRIVATE ${Qt5WaylandClient_PRIVATE_INCLUDE_DIRS})
 endif()
 target_include_directories(maliit-connection PUBLIC connection)
 
@@ -194,6 +194,7 @@ if(enable-xcb)
     find_package(XCB REQUIRED xfixes)
     list(APPEND PLUGINS_INCLUDE_DIRS ${XCB_INCLUDE_DIRS})
     list(APPEND PLUGINS_LIBRARIES ${XCB_LIBRARIES})
+    add_definitions(-DHAVE_XCB)
 endif()
 
 if(enable-wayland)
@@ -323,28 +324,31 @@ if(enable-wayland)
     endif()
 endif()
 
-add_executable(maliit-exampleapp-plainqt
-        examples/apps/plainqt/mainwindow.cpp
-        examples/apps/plainqt/mainwindow.h
-        examples/apps/plainqt/plainqt.cpp)
-target_link_libraries(maliit-exampleapp-plainqt Qt5::Gui Qt5::Widgets)
+if(enable-examples)
+    find_package(Qt5Widgets)
+    add_executable(maliit-exampleapp-plainqt
+            examples/apps/plainqt/mainwindow.cpp
+            examples/apps/plainqt/mainwindow.h
+            examples/apps/plainqt/plainqt.cpp)
+    target_link_libraries(maliit-exampleapp-plainqt Qt5::Gui Qt5::Widgets)
 
-add_library(cxxhelloworldplugin MODULE
-        examples/plugins/cxx/helloworld/helloworldinputmethod.cpp
-        examples/plugins/cxx/helloworld/helloworldinputmethod.h
-        examples/plugins/cxx/helloworld/helloworldplugin.cpp
-        examples/plugins/cxx/helloworld/helloworldplugin.h)
-target_link_libraries(cxxhelloworldplugin maliit-plugins Qt5::Widgets)
+    add_library(cxxhelloworldplugin MODULE
+            examples/plugins/cxx/helloworld/helloworldinputmethod.cpp
+            examples/plugins/cxx/helloworld/helloworldinputmethod.h
+            examples/plugins/cxx/helloworld/helloworldplugin.cpp
+            examples/plugins/cxx/helloworld/helloworldplugin.h)
+    target_link_libraries(cxxhelloworldplugin maliit-plugins Qt5::Widgets)
 
-add_library(cxxoverrideplugin MODULE
-            examples/plugins/cxx/override/overrideinputmethod.cpp
-            examples/plugins/cxx/override/overrideinputmethod.h
-            examples/plugins/cxx/override/overrideplugin.cpp
-            examples/plugins/cxx/override/overrideplugin.h)
-target_link_libraries(cxxoverrideplugin maliit-plugins Qt5::Widgets)
+    add_library(cxxoverrideplugin MODULE
+                examples/plugins/cxx/override/overrideinputmethod.cpp
+                examples/plugins/cxx/override/overrideinputmethod.h
+                examples/plugins/cxx/override/overrideplugin.cpp
+                examples/plugins/cxx/override/overrideplugin.h)
+    target_link_libraries(cxxoverrideplugin maliit-plugins Qt5::Widgets)
 
-file(COPY examples/plugins/qml/helloworld/helloworld.qml
-     DESTINATION ${CMAKE_BINARY_DIR}/examples/plugins/qml/helloworld)
+    file(COPY examples/plugins/qml/helloworld/helloworld.qml
+        DESTINATION ${CMAKE_BINARY_DIR}/examples/plugins/qml/helloworld)
+endif()
 
 # Documentation
 
@@ -385,8 +389,13 @@ install(TARGETS maliit-plugins
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/maliit-2)
 
-install(TARGETS maliit-server maliit-exampleapp-plainqt
+install(TARGETS maliit-server
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+if(enable-examples)
+    install(TARGETS maliit-exampleapp-plainqt
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+endif()
 
 install(DIRECTORY common/
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/maliit-2
@@ -408,7 +417,7 @@ install(EXPORT MaliitPluginsTargets FILE MaliitPluginsTargets.cmake DESTINATION 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/MaliitPluginsConfig.cmake ${CMAKE_CURRENT_BINARY_DIR}/MaliitPluginsConfigVersion.cmake
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/MaliitPlugins)
 
-install(FILES INSTALL.local LICENSE.LGPL NEWS README
+install(FILES INSTALL.local LICENSE.LGPL NEWS README.md
         DESTINATION ${CMAKE_INSTALL_DATADIR}/doc/maliit-framework)
 
 if(enable-glib)
@@ -513,7 +522,7 @@ if(enable-tests)
     target_compile_definitions(test-utils PUBLIC
             -DMALIIT_TEST_PLUGINS_DIR="${CMAKE_INSTALL_PREFIX}/lib/maliit-framework-tests/plugins"
             -DMALIIT_TEST_DATA_PATH="${CMAKE_INSTALL_PREFIX}/lib/maliit-framework-tests"
-            -DIN_TREE_TEST_PLUGIN_DIR="${CMAKE_BINARY_DIR}/examples/plugins")
+            -DIN_TREE_TEST_PLUGIN_DIR="${CMAKE_SOURCE_DIR}/examples/plugins")
 
     add_library(test-stubs STATIC
             tests/stubs/mkeyboardstatetracker_stub.h
@@ -530,7 +539,6 @@ if(enable-tests)
         set(_libs ${ARGV})
         list(REMOVE_AT _libs 0)
         target_link_libraries(${name} test-utils maliit-plugins ${_libs})
-
         add_test(${name} ${name})
 
         set(test_targets ${test_targets} ${name} PARENT_SCOPE)
@@ -551,7 +559,8 @@ if(enable-tests)
     set_property(TEST ${test_targets} PROPERTY ENVIRONMENT
             TESTING_IN_SANDBOX=1
             TESTPLUGIN_PATH=${CMAKE_BINARY_DIR}/tests/plugins
-            TESTDATA_PATH=${CMAKE_SOURCE_DIR}/tests)
+            TESTDATA_PATH=${CMAKE_SOURCE_DIR}/tests
+            QT_QPA_PLATFORM=minimal)
 
     if(enable-glib)
         add_executable(ut_maliit_glib_settings

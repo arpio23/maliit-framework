@@ -2,7 +2,6 @@
  *
  * Copyright (C) 2012 One Laptop per Child Association
  *
- * Contact: maliit-discuss@lists.maliit.org
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -45,7 +44,8 @@ struct _MaliitAttributeExtensionPrivate
     MaliitAttributeExtensionRegistry *registry;
 };
 
-G_DEFINE_TYPE (MaliitAttributeExtension, maliit_attribute_extension, G_TYPE_OBJECT)
+G_DEFINE_TYPE_WITH_CODE (MaliitAttributeExtension, maliit_attribute_extension,
+                         G_TYPE_OBJECT, G_ADD_PRIVATE (MaliitAttributeExtension))
 
 enum
 {
@@ -247,16 +247,12 @@ maliit_attribute_extension_class_init (MaliitAttributeExtensionClass *extension_
                       2,
                       G_TYPE_STRING,
                       G_TYPE_VARIANT);
-
-    g_type_class_add_private (extension_class, sizeof (MaliitAttributeExtensionPrivate));
 }
 
 static void
 maliit_attribute_extension_init (MaliitAttributeExtension *extension)
 {
-    MaliitAttributeExtensionPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (extension,
-                                                                         MALIIT_TYPE_ATTRIBUTE_EXTENSION,
-                                                                         MaliitAttributeExtensionPrivate);
+    MaliitAttributeExtensionPrivate *priv = maliit_attribute_extension_get_instance_private (extension);
 
     priv->id = 0;
     priv->filename = NULL;

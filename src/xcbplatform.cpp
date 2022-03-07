@@ -2,7 +2,6 @@
  *
  * Copyright (C) 2013 Openismus GmbH
  *
- * Contact: maliit-discuss@lists.maliit.org
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -85,10 +84,9 @@ void XCBPlatform::setInputRegion(QWindow* window,
     }
 
     QVector<xcb_rectangle_t> xcbrects;
-    const QVector<QRect> rects(region.rects());
 
-    xcbrects.reserve(rects.size());
-    Q_FOREACH (const QRect &rect, rects) {
+    xcbrects.reserve(region.rectCount());
+    Q_FOREACH (const QRect &rect, region) {
         xcb_rectangle_t xcbrect;
 
         xcbrect.x = rect.x();
