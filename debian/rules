@@ -13,9 +13,6 @@ override_dh_install:
 	mv debian/tmp/usr/share/doc/maliit-framework-doc debian/tmp/usr/share/doc/maliit-framework/html
 	rm debian/tmp/usr/share/doc/maliit-framework/LICENSE.LGPL*
 
-	# drop Vcs control files from doc:pkg
-	find debian/tmp/ -name .gitignore -delete
-
 	# drop build path from generated .html files
 	cd debian/tmp/usr/share/doc/maliit-framework/html && \
 	    find . -type f | while read file; do \
