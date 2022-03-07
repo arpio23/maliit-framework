@@ -1256,8 +1256,8 @@ libmaliit-plugins.so.2 libmaliit-plugins2 #MINVER#
  _ZN7QStringD1Ev@Base 2.0.0
  _ZN7QStringD2Ev@Base 2.0.0
  (optional=templinst)_ZN7QVectorI15xcb_rectangle_tE7reallocEi6QFlagsIN10QArrayData16AllocationOptionEE@Base 2.0.0
- (optional=templinst)_ZN7QVectorI5QRectED1Ev@Base 2.0.0
- (optional=templinst)_ZN7QVectorI5QRectED2Ev@Base 2.0.0
+#MISSING: 2.2.0# (optional=templinst)_ZN7QVectorI5QRectED1Ev@Base 2.0.0
+#MISSING: 2.2.0# (optional=templinst)_ZN7QVectorI5QRectED2Ev@Base 2.0.0
  (optional=templinst)_ZN7QVectorIN6Maliit10WindowDataEE7reallocEi6QFlagsIN10QArrayData16AllocationOptionEE@Base 2.0.0
  (optional=templinst)_ZN7QVectorIN6Maliit10WindowDataEED1Ev@Base 2.0.0
  (optional=templinst)_ZN7QVectorIN6Maliit10WindowDataEED2Ev@Base 2.0.0
@@ -1570,6 +1570,12 @@ libmaliit-plugins.so.2 libmaliit-plugins2 #MINVER#
  _ZNK9QtWayland19zwp_input_method_v113isInitializedEv@Base 2.0.0
  _ZNK9QtWayland26zwp_input_panel_surface_v113isInitializedEv@Base 2.0.0
  _ZNK9QtWayland27zwp_input_method_context_v113isInitializedEv@Base 2.0.0
+ _ZSt13__adjust_heapIN5QListI14QSharedPointerI12MKeyOverrideEE8iteratorExS3_N9__gnu_cxx5__ops15_Iter_comp_iterIPFbRKS3_SA_EEEEvT_T0_SF_T1_T2_@Base 2.2.0
+ _ZSt13__heap_selectIN5QListI14QSharedPointerI12MKeyOverrideEE8iteratorEN9__gnu_cxx5__ops15_Iter_comp_iterIPFbRKS3_SA_EEEEvT_SE_SE_T0_@Base 2.2.0
+ _ZSt16__insertion_sortIN5QListI14QSharedPointerI12MKeyOverrideEE8iteratorEN9__gnu_cxx5__ops15_Iter_comp_iterIPFbRKS3_SA_EEEEvT_SE_T0_@Base 2.2.0
+ _ZSt16__introsort_loopIN5QListI14QSharedPointerI12MKeyOverrideEE8iteratorEiN9__gnu_cxx5__ops15_Iter_comp_iterIPFbRKS3_SA_EEEEvT_SE_T0_T1_@Base 2.2.0
+ _ZSt22__move_median_to_firstIN5QListI14QSharedPointerI12MKeyOverrideEE8iteratorEN9__gnu_cxx5__ops15_Iter_comp_iterIPFbRKS3_SA_EEEEvT_SE_SE_SE_T0_@Base 2.2.0
+ _ZSt25__unguarded_linear_insertIN5QListI14QSharedPointerI12MKeyOverrideEE8iteratorEN9__gnu_cxx5__ops14_Val_comp_iterIPFbRKS3_SA_EEEEvT_T0_@Base 2.2.0
  _ZTI11MImSettings@Base 2.0.0
  _ZTI11MaliitQuick@Base 2.0.0
  _ZTI11QSharedData@Base 2.0.0
