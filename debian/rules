@@ -9,9 +9,27 @@ include /usr/share/dpkg/buildflags.mk
 	dh $@ --with pkgkde_symbolshelper
 
 override_dh_install:
+	# re-arrange files in doc:pkg
 	mv debian/tmp/usr/share/doc/maliit-framework-doc debian/tmp/usr/share/doc/maliit-framework/html
 	rm debian/tmp/usr/share/doc/maliit-framework/LICENSE.LGPL*
+
+	# drop Vcs control files from doc:pkg
+	find debian/tmp/ -name .gitignore -delete
+
+	# drop build path from generated .html files
+	cd debian/tmp/usr/share/doc/maliit-framework/html && \
+	    find . -type f | while read file; do \
+	        sed -r -e 's@$(CURDIR)@@g' -i $$file; \
+	    done
+
+	# finally, run dh_install
 	dh_install
+
+override_dh_installexamples:
+	dh_installexamples
+
+	# drop Vcs control files from doc:pkg
+	find debian/maliit-framework-doc/ -name .gitignore -delete
 
 override_dh_auto_test:
 	xvfb-run -a dh_auto_test --no-parallel
