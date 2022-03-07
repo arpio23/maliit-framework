@@ -6,7 +6,7 @@ DPKG_EXPORT_BUILDFLAGS = 1
 include /usr/share/dpkg/buildflags.mk
 
 %:
-	dh $@
+	dh $@ --with pkgkde_symbolshelper
 
 override_dh_install:
 	mv debian/tmp/usr/share/doc/maliit-framework-doc debian/tmp/usr/share/doc/maliit-framework/html
