@@ -36,6 +36,7 @@ Rules-Requires-Root: no
 
 Package: maliit-framework
 Architecture: any
+Section: misc
 Depends: ${misc:Depends}, ${shlibs:Depends}, qml-module-qtquick-localstorage
 Recommends: maliit-inputmethod-plugin
 Breaks: gir1.2-maliit-1.0 (<< ${source:Version}),
@@ -83,7 +84,6 @@ Description: Maliit Input Method Framework - Development Files
 Package: libmaliit-glib2
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Architecture: any
-Section: libs
 Breaks: libmaliit-glib0,
 Replaces: libmaliit-glib0,
 Description: Maliit Input Method Framework - GLib Bindings
