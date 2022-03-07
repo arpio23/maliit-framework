@@ -113,11 +113,12 @@ Copyright: 2010, Nokia Corporation and/or its subsidiary(-ies).
   2012, Nokia Corporation and/or its subsidiary(-ies).
 License: LGPL-2.1
 
-Files: .gitignore
+Files: .github/workflows/main.yaml
+ .gitignore
  CMakeLists.txt
  INSTALL.local
  NEWS
- README
+ README.md
  cmake/FindGIO.cmake
  cmake/FindGLib2.cmake
  cmake/FindGtk3.cmake
