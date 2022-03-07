@@ -71,7 +71,8 @@ Description: Maliit Input Method Framework - Plugin Library
 Package: maliit-framework-dev
 Architecture: any
 Section: libdevel
-Depends: maliit-framework (= ${binary:Version}), ${misc:Depends}
+Depends: maliit-framework (= ${binary:Version}),
+         ${misc:Depends},
 Description: Maliit Input Method Framework - Development Files
  Maliit provides a flexible and cross-platform input method framework. It has a
  plugin-based client-server architecture where applications act as clients and
@@ -82,7 +83,8 @@ Description: Maliit Input Method Framework - Development Files
  This package is needed to compile plugins for the Maliit framework
 
 Package: libmaliit-glib2
-Depends: ${misc:Depends}, ${shlibs:Depends}
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
 Architecture: any
 Breaks: libmaliit-glib0,
 Replaces: libmaliit-glib0,
@@ -98,7 +100,7 @@ Description: Maliit Input Method Framework - GLib Bindings
 Package: libmaliit-glib-dev
 Depends: libmaliit-glib2 (= ${binary:Version}),
          ${misc:Depends},
-         ${shlibs:Depends}
+         ${shlibs:Depends},
 Architecture: any
 Section: libdevel
 Description: Maliit Input Method Framework - GLib Development Headers
