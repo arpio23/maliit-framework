@@ -1,87 +1,442 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: maliit-framework
 
-Files: debian/* connection/waylandinputmethodconnection.*
-Copyright: 2013 Canonical Ltd
-           2012 Canonical Ltd
+Files: common/maliit/namespace.h
+ common/maliit/namespaceinternal.h
+ connection/connectionfactory.cpp
+ connection/connectionfactory.h
+ connection/dbusinputcontextconnection.cpp
+ connection/dbusinputcontextconnection.h
+ connection/dbusserverconnection.cpp
+ connection/dbusserverconnection.h
+ connection/inputcontextdbusaddress.cpp
+ connection/inputcontextdbusaddress.h
+ connection/mimserverconnection.cpp
+ connection/mimserverconnection.h
+ connection/minputcontextconnection.cpp
+ connection/minputcontextconnection.h
+ connection/serverdbusaddress.cpp
+ connection/serverdbusaddress.h
+ examples/apps/plainqt/plainqt.cpp
+ examples/plugins/cxx/helloworld/helloworldinputmethod.cpp
+ examples/plugins/cxx/helloworld/helloworldinputmethod.h
+ examples/plugins/cxx/helloworld/helloworldplugin.cpp
+ examples/plugins/cxx/helloworld/helloworldplugin.h
+ examples/plugins/cxx/override/overrideinputmethod.cpp
+ examples/plugins/cxx/override/overrideinputmethod.h
+ examples/plugins/cxx/override/overrideplugin.cpp
+ examples/plugins/cxx/override/overrideplugin.h
+ examples/plugins/qml/cyclekeys/CycleKey.qml
+ examples/plugins/qml/cyclekeys/cyclekeysplugin.cpp
+ examples/plugins/qml/cyclekeys/cyclekeysplugin.h
+ examples/plugins/qml/cyclekeys/main.qml
+ examples/plugins/qml/helloworld/helloworld.qml
+ examples/plugins/qml/override/override.qml
+ examples/plugins/qml/override/overrideplugin.cpp
+ examples/plugins/qml/override/overrideplugin.h
+ input-context/minputcontext.h
+ passthroughserver/main.cpp
+ src/maliit/plugins/abstractinputmethod.cpp
+ src/maliit/plugins/abstractinputmethod.h
+ src/maliit/plugins/abstractinputmethodhost.cpp
+ src/maliit/plugins/abstractinputmethodhost.h
+ src/maliit/plugins/attributeextension.cpp
+ src/maliit/plugins/attributeextension.h
+ src/maliit/plugins/attributeextension_p.h
+ src/maliit/plugins/extensionevent.cpp
+ src/maliit/plugins/extensionevent.h
+ src/maliit/plugins/extensionevent_p.h
+ src/maliit/plugins/inputmethodplugin.h
+ src/maliit/plugins/keyoverride.cpp
+ src/maliit/plugins/keyoverride.h
+ src/maliit/plugins/keyoverride_p.h
+ src/maliit/plugins/keyoverridedata.cpp
+ src/maliit/plugins/keyoverridedata.h
+ src/maliit/plugins/plugindescription.cpp
+ src/maliit/plugins/plugindescription.h
+ src/maliit/plugins/subviewdescription.h
+ src/maliit/plugins/updateevent.cpp
+ src/maliit/plugins/updateevent.h
+ src/maliit/plugins/updateevent_p.h
+ src/maliit/plugins/updatereceiver.cpp
+ src/maliit/plugins/updatereceiver.h
+ src/mattributeextensionid.cpp
+ src/mattributeextensionid.h
+ src/mattributeextensionmanager.cpp
+ src/mattributeextensionmanager.h
+ src/mimhwkeyboardtracker.h
+ src/mimhwkeyboardtracker_p.h
+ src/mimonscreenplugins.cpp
+ src/mimonscreenplugins.h
+ src/mimpluginmanager.h
+ src/mimpluginmanager_p.h
+ src/mimserver.cpp
+ src/mimserver.h
+ src/mimserveroptions.cpp
+ src/mimserveroptions.h
+ src/mimsettings.cpp
+ src/mimsettings.h
+ src/mimsubviewoverride.cpp
+ src/mimsubviewoverride.h
+ src/minputmethodhost.cpp
+ src/minputmethodhost.h
+ src/quick/inputmethodquick.cpp
+ src/quick/inputmethodquick.h
+ src/quick/inputmethodquickplugin.cpp
+ src/quick/inputmethodquickplugin.h
+ src/quick/keyoverridequick.cpp
+ src/quick/keyoverridequick.h
+ src/quick/keyoverridequick_p.h
+ src/quick/maliitquick.h
+ tests/ft_exampleplugin/ft_exampleplugin.cpp
+ tests/ft_exampleplugin/ft_exampleplugin.h
+ tests/sanitychecks/sanitychecks.cpp
+ tests/sanitychecks/sanitychecks.h
+ tests/stubs/fakeproperty.cpp
+ tests/stubs/fakeproperty.h
+ tests/stubs/mkeyboardstatetracker_stub.h
+ tests/ut_mattributeextensionmanager/ut_mattributeextensionmanager.cpp
+ tests/ut_mattributeextensionmanager/ut_mattributeextensionmanager.h
+ tests/ut_mimserveroptions/ut_mimserveroptions.cpp
+ tests/ut_mimserveroptions/ut_mimserveroptions.h
+ tests/ut_mimsettings/ut_mimsettings.cpp
+ tests/ut_mimsettings/ut_mimsettings.h
+ tests/ut_minputmethodquickplugin/ut_minputmethodquickplugin.cpp
+ tests/ut_minputmethodquickplugin/ut_minputmethodquickplugin.h
+ tests/utils/core-utils.cpp
+ tests/utils/core-utils.h
+ tests/utils/gui-utils.cpp
+ tests/utils/gui-utils.h
+Copyright: 2010, Nokia Corporation and/or its subsidiary(-ies).
+  2010-2011, Nokia Corporation and/or its subsidiary(-ies).
+  2011, Nokia Corporation and/or its subsidiary(-ies).
+  2012, Nokia Corporation and/or its subsidiary(-ies).
 License: LGPL-2.1
 
-Files: src/mimsettingsqsettings.*
-Copyright: 2012 Mattia Barbon <mattia@develer.com>
-           2012 Canonical Ltd
+Files: .gitignore
+ CMakeLists.txt
+ INSTALL.local
+ NEWS
+ README
+ cmake/FindGIO.cmake
+ cmake/FindGLib2.cmake
+ cmake/FindGtk3.cmake
+ common/.gitignore
+ common/maliit-framework.pc.in
+ common/maliit-framework.prf.in
+ connection/.gitignore
+ connection/README.weston
+ connection/org.maliit.server.service.in
+ dbus_interfaces/minputmethodcontext1interface.xml
+ dbus_interfaces/minputmethodserver1interface.xml
+ doc/.gitignore
+ doc/Doxyfile.in
+ doc/aliases.sed
+ doc/images/architecture-overview.png
+ doc/images/maliit-fw-components.odg
+ doc/images/maliit-fw-components.png
+ doc/src/architecture.dox
+ doc/src/common.dox
+ doc/src/extensions.dox
+ doc/src/header.html
+ doc/src/images/.dummy
+ doc/src/images/dummyimage
+ doc/src/internals.dox
+ doc/src/libmaliit.dox
+ doc/src/mainpage.dox
+ doc/src/maliitserver.dox
+ doc/src/meego-im.css
+ doc/src/pluginapi.dox
+ doc/src/pluginsystem.dox
+ doc/src/plugintutorial.dox
+ doc/src/toolbarxml.dox
+ examples/README
+ examples/apps/plainqt/.gitignore
+ examples/apps/plainqt/mainwindow.cpp
+ examples/apps/plainqt/mainwindow.h
+ examples/apps/qml/enterKeyCustomization.qml
+ examples/plugins/cxx/helloworld/helloworldplugin.json
+ examples/plugins/cxx/override/overrideplugin.json
+ examples/plugins/qml/cyclekeys/cyclekeys.qrc
+ examples/plugins/qml/override/override.qrc
+ input-context/maliit.json
+ maliit-glib/.gitignore
+ maliit-glib/MaliitGLibConfig.cmake.in
+ maliit-glib/maliit-docs.xml
+ maliit-glib/maliit-glib-docs.pro
+ maliit-glib/maliit-glib.pc.in
+ maliit-glib/maliit-sections.txt
+ maliit-glib/maliitmarshallers.list
+ passthroughserver/.gitignore
+ src/.gitignore
+ src/MaliitPluginsConfig.cmake.in
+ src/gtk/plugins/im-module/README.md
+ src/maliit-defines.prf.in
+ src/maliit-plugins.pc.in
+ src/maliit-plugins.prf.in
+ src/maliit-server.pc.in
+ src/maliit/plugins/subviewdescription.cpp
+ src/qt/plugins/shellintegration/inputpanelshell.json
+ tests/dummyimplugin/dummyimplugin.cpp
+ tests/dummyimplugin/dummyimplugin.h
+ tests/dummyimplugin/dummyimplugin.json
+ tests/dummyimplugin/dummyinputmethod.cpp
+ tests/dummyimplugin/dummyinputmethod.h
+ tests/dummyimplugin2/dummyimplugin2.cpp
+ tests/dummyimplugin2/dummyimplugin2.h
+ tests/dummyimplugin2/dummyimplugin2.json
+ tests/dummyimplugin3/dummyimplugin3.cpp
+ tests/dummyimplugin3/dummyimplugin3.h
+ tests/dummyimplugin3/dummyimplugin3.json
+ tests/dummyimplugin3/dummyinputmethod3.cpp
+ tests/dummyimplugin3/dummyinputmethod3.h
+ tests/dummyplugin/dummyplugin.cpp
+ tests/dummyplugin/dummyplugin.h
+ tests/dummyplugin/dummyplugin.json
+ tests/ft_exampleplugin/.gitignore
+ tests/ft_mimpluginmanager/.gitignore
+ tests/ft_mimpluginmanager/ft_mimpluginmanager.cpp
+ tests/ft_mimpluginmanager/ft_mimpluginmanager.h
+ tests/sanitychecks/.gitignore
+ tests/ut_maliit_glib_settings/.gitignore
+ tests/ut_mattributeextensionmanager/.gitignore
+ tests/ut_mattributeextensionmanager/toolbar1.xml
+ tests/ut_mattributeextensionmanager/toolbar2.xml
+ tests/ut_mimonscreenplugins/.gitignore
+ tests/ut_mimpluginmanager/.gitignore
+ tests/ut_mimpluginmanager/toolbar1.xml
+ tests/ut_mimpluginmanager/toolbar2.xml
+ tests/ut_mimpluginmanager/ut_mimpluginmanager.cpp
+ tests/ut_mimpluginmanager/ut_mimpluginmanager.h
+ tests/ut_mimpluginmanagerconfig/.gitignore
+ tests/ut_mimserveroptions/.gitignore
+ tests/ut_mimsettings/.gitignore
+ tests/ut_minputmethodquickplugin/.gitignore
+ tests/ut_mkeyoverride/.gitignore
+ tests/ut_mkeyoverride/ut_mkeyoverride.cpp
+ tests/ut_mkeyoverride/ut_mkeyoverride.h
+Copyright: 2010-2012, Nokia Corporation and/or its subsidiary(-ies).
+  2012, One Laptop per Child Association
+  2012, Mattia Barbon <mattia@develer.com>
+  2012-2015, Canonical Ltd
+  2013, Openismus GmbH
+  2013, Digia Plc and/or its subsidiary(-ies).
+  2013, Jolla Ltd.
+  2013-2017, Jan Arne Petersen
+License: LGPL-2.1
+Comment:
+ Assuming same license as used for code files. See LICENSE.LGPL file.
+ .
+ Assuming all major copyright holders mention in code files as copyright
+ holders of above files (that come without license/copyright headers).
+
+Files: connection/waylandinputmethodconnection.cpp
+ connection/waylandinputmethodconnection.h
+ maliit-glib/maliitbus.c
+ maliit-glib/maliitbus.h
+ maliit-glib/maliitbusprivate.h
+ maliit-glib/maliitpluginsettings.c
+ maliit-glib/maliitpluginsettings.h
+ maliit-glib/maliitpluginsettingsprivate.h
+ maliit-glib/maliitsettingdata.c
+ maliit-glib/maliitsettingdata.h
+ maliit-glib/maliitsettingsentry.c
+ maliit-glib/maliitsettingsentry.h
+ maliit-glib/maliitsettingsentryprivate.h
+ maliit-glib/maliitsettingsmanager.c
+ maliit-glib/maliitsettingsmanager.h
+ tests/ut_maliit_glib_settings/mockmaliitserver.c
+ tests/ut_maliit_glib_settings/mockmaliitserver.h
+ tests/ut_maliit_glib_settings/ut_maliit_glib_settings.c
+ tests/ut_mimonscreenplugins/ut_mimonscreenplugins.cpp
+ tests/ut_mimonscreenplugins/ut_mimonscreenplugins.h
+Copyright: 2012, Canonical Ltd
+  2015, Canonical Ltd
 License: LGPL-2.1
 
-Files: connection/dbuscustomarguments src/maliit/plugins/abstractpluginsetting.h src/msharedattributeextensionmanager.*
-Copyright: 2012 Mattia Barbon <mattia@develer.com>
+Files: src/abstractplatform.cpp
+ src/abstractplatform.h
+ src/unknownplatform.cpp
+ src/unknownplatform.h
+ src/waylandplatform.cpp
+ src/waylandplatform.h
+ src/windowdata.cpp
+ src/windowdata.h
+ src/windowgroup.cpp
+ src/windowgroup.h
+ src/xcbplatform.cpp
+ src/xcbplatform.h
+Copyright: 2013, Openismus GmbH
 License: LGPL-2.1
 
-Files: src/unknownplatform.* src/abstractplatform.* src/windowdata.* src/windowgroup.* src/waylandplatform.* src/mimpluginmanager_p.h src/mimpluginmanager.h src/xcbplatform.* src/mimserveroptions.cpp
-Copyright: 2013 Openismus GmbH
+Files: src/maliit/standaloneinputmethod.cpp
+ src/maliit/standaloneinputmethod.h
+ src/maliit/standaloneinputmethodhost.cpp
+ src/maliit/standaloneinputmethodhost.h
+ src/qt/plugins/shellintegration/inputpanelshellplugin.cpp
+ src/qt/plugins/shellintegration/qwaylandinputpanelshellintegration.cpp
+ src/qt/plugins/shellintegration/qwaylandinputpanelshellintegration.h
+ src/qt/plugins/shellintegration/qwaylandinputpanelsurface.cpp
+ src/qt/plugins/shellintegration/qwaylandinputpanelsurface.h
+Copyright: 2017, Jan Arne Petersen
 License: LGPL-2.1
 
-Files: input-context/minputcontext.cpp
-Copyright: 2013 Jolla Ltd
-           2013 Digia Plc and/or its subsidiary(-ies)
-           2010 Nokia Corporation and/or its subsidiary(-ies)
+Files: maliit-glib/maliitattributeextension.c
+ maliit-glib/maliitattributeextension.h
+ maliit-glib/maliitattributeextensionprivate.h
+ maliit-glib/maliitattributeextensionregistry.c
+ maliit-glib/maliitattributeextensionregistry.h
+ maliit-glib/maliitinputmethod.c
+ maliit-glib/maliitinputmethod.h
+ tests/ut_mimpluginmanagerconfig/ut_mimpluginmanagerconfig.cpp
+ tests/ut_mimpluginmanagerconfig/ut_mimpluginmanagerconfig.h
+Copyright: 2012, One Laptop per Child Association
+License: LGPL-2.1
+
+Files: common/maliit/settingdata.cpp
+ common/maliit/settingdata.h
+ connection/dbuscustomarguments.cpp
+ connection/dbuscustomarguments.h
+ src/maliit/plugins/abstractpluginsetting.h
+ src/msharedattributeextensionmanager.cpp
+ src/msharedattributeextensionmanager.h
+Copyright: 2012, Mattia Barbon <mattia@develer.com>
+License: LGPL-2.1
+
+Files: src/gtk/plugins/im-module/gtkimcontextwayland.c
+ src/gtk/plugins/im-module/gtkimcontextwayland.h
+ src/gtk/plugins/im-module/imwayland.c
+Copyright: 2013, 2017, Jan Arne Petersen
+License: LGPL-2+
+
+Files: src/mimsettingsqsettings.cpp
+ src/mimsettingsqsettings.h
+Copyright: 2012, Canonical Ltd
+  2012, Mattia Barbon <mattia@develer.com>
+License: LGPL-2.1
+
+Files: cmake/ECMFindModuleHelpers.cmake
+Copyright: 2014, Alex Merry <alex.merry@kde.org>
+License: BSD-3-clause
+
+Files: cmake/FindWaylandProtocols.cmake
+ cmake/FindXCB.cmake
+Copyright: 2015, Jari Vetoniemi
+License: BSD-3-clause
+
+Files: cmake/FindQtWaylandScanner.cmake
+ cmake/FindWaylandScanner.cmake
+Copyright: 2012-2014, Pier Luigi Fiorini <pierluigi.fiorini@gmail.com>
+License: BSD-3-clause
+
+Files: src/mimpluginmanager.cpp
+Copyright: 2010, Nokia Corporation and/or its subsidiary(-ies).
+  2012, Canonical Ltd
 License: LGPL-2.1
 
 Files: input-context/main.cpp
-Copyright:  2013 Digia Plc and/or its subsidiary(-ies)
+Copyright: 2013, Digia Plc and/or its subsidiary(-ies).
 License: LGPL-2.1
 
-Files: tests/ut_mimpluginmanagerconfig/ut_mimpluginmanagerconfig.h tests/ut_mimpluginmanagerconfig/ut_mimpluginmanagerconfig.cpp ./src/mimhwkeyboardtracker
-Copyright: 2012 One Laptop per Child Association
+Files: input-context/minputcontext.cpp
+Copyright: 2010, Nokia Corporation and/or its subsidiary(-ies).
 License: LGPL-2.1
 
 Files: src/mimhwkeyboardtracker_stub.cpp
-Copyright: 2013 Gianni Valdambrini <aleister@develer.com>
+Copyright: 2013, Gianni Valdambrini <aleister@develer.com>
 License: LGPL-2.1
 
-Files: weston-protocols/*
-Copyright: 2012, 2013 Intel Corporation
-License: Intel
- Permission to use, copy, modify, distribute, and sell this
- software and its documentation for any purpose is hereby granted
- without fee, provided that the above copyright notice appear in
- all copies and that both that copyright notice and this permission
- notice appear in supporting documentation, and that the name of
- the copyright holders not be used in advertising or publicity
- pertaining to distribution of the software without specific,
- written prior permission.  The copyright holders make no
- representations about the suitability of this software for any
- purpose.  It is provided "as is" without express or implied
- warranty.
- .
- THE COPYRIGHT HOLDERS DISCLAIM ALL WARRANTIES WITH REGARD TO THIS
- SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
- FITNESS, IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY
- SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
- AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
- ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
- THIS SOFTWARE.
+Files: src/mimhwkeyboardtracker.cpp
+Copyright: 2011, Nokia Corporation and/or its subsidiary(-ies).
+  2012, One Laptop per Child Association
+License: LGPL-2.1
 
-Files: *
-Copyright: 2011 Nokia Corporation and/or its subsidiary(-ies)
-           2010 Nokia Corporation and/or its subsidiary(-ies)
+Files: doc/src/footer.html
+Copyright: 2011, Nokia Corporation</td>
+License: LGPL-2.1
+Comment:
+ Assuming same license as used for code files. See LICENSE.LGPL file.
+ .
+ The copyright statement in this file is meant to describe the whole
+ project's copyright holdership, however, it seems that the footer.html
+ needs to be updated in this respect.
+
+Files: cmake/FindUDev.cmake
+Copyright: 2010, Rafael Fernández López <ereslibre@kde.org>
+  2019, Volker Krause <vkrause@kde.org>
+License: BSD-3-clause
+
+Files: cmake/FindWayland.cmake
+Copyright: 2014, Alex Merry <alex.merry@kde.org>
+  2014, Martin Gräßlin <mgraesslin@kde.org>
+License: BSD-3-clause
+
+Files: debian/*
+Copyright: 2013, Canonical Ltd.
+           2012, Canonical Ltd.
+           2022, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 License: LGPL-2.1
 
 License: LGPL-2.1
- This library is free software; you can redistribute it and/or
- modify it under the terms of the GNU Lesser General Public
- License as published by the Free Software Foundation, version 2.1
- of the License.
+ This library is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published by
+ the Free Software Foundation, version 2.1 of the License.
  .
- This library is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- Lesser General Public License for more details.
+ This library is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+ General Public License for more details.
  .
- You should have received a copy of the GNU Lesser General Public
- License along with this library; if not, write to the Free Software
- Foundation, Inc., 51 Franklin Street, Fifth Floor,
- Boston, MA  02110-1301  USA
+ You should have received a copy of the GNU Lesser General Public License
+ along with this library; if not, write to the Free Software Foundation,
+ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  .
  On Debian systems, the full text of the GNU Lesser General Public
  License version 2.1 can be found in the file
  `/usr/share/common-licenses/LGPL-2.1'.
+
+License: LGPL-2+
+ This library is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published by
+ the Free Software Foundation; either version 2, or (at your option) any
+ later version.
+ .
+ This library is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+ General Public License for more details.
+ .
+ You should have received a copy of the GNU Lesser General Public License
+ along with this library; if not, write to the Free Software Foundation,
+ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ .
+ On Debian systems, the full text of the GNU Lesser General Public
+ License version 2.1 can be found in the file
+ `/usr/share/common-licenses/LGPL-2.0'.
+
+License: BSD-3-clause
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ .
+ 1.  Redistributions of source code must retain the above copyright notice,
+     this list of conditions and the following disclaimer.
+ .
+ 2.  Redistributions in binary form must reproduce the above copyright notice,
+     this list of conditions and the following disclaimer in the documentation
+     and/or other materials provided with the distribution.
+ .
+ 3.  The name of the copyright holders may be used to endorse or promote
+     products derived from this software without specific prior written
+     permission.
+ .
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ POSSIBILITY OF SUCH DAMAGE.
