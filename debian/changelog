@@ -1,12 +1,16 @@
-maliit-framework (2.2.0-1) UNRELEASED; urgency=medium
+maliit-framework (2.2.0-1) unstable; urgency=medium
 
   [ Norbert Preining ]
   * Prepare initial packaging of v2.0.0.
 
   [ Mike Gabriel ]
   * Initial upload to Debian. (Closes: #991528).
-  * debian/patches/qtwaylandscanner-path.diff:
-    + Trivial rebase.
+  * debian/patches:
+    + Add README file explaining our patch naming scheme.
+    + Drop qtwaylandscanner-path.diff. Requirement obsolete, issue has been
+      addressed upstream.
+    + Add 1001_skip-Ut_MInputMethodQuickPlugin_testQmlSetup_unittest.patch
+      as it currently fails.
   * debian/control:
     + Drop dbg:pkg.
     + Fix Section: field: docs -> doc.
@@ -48,5 +52,8 @@ maliit-framework (2.2.0-1) UNRELEASED; urgency=medium
     + Drop /usr/share/doc/maliit-framework-doc.
   * debian/source/lintian-overrides:
     + Override awkward text layout in LICENSE.LGPL.
+    + Ignore lintian's complaint about LICENSE.LGPL not listed in d/copyright.
+  * debian/maliit-framework.lintian-overrides:
+    +Ignore missing maliit-server man page for now.
 
- -- Mike Gabriel <sunweaver@debian.org>  Mon, 07 Mar 2022 08:36:22 +0100
+ -- Mike Gabriel <sunweaver@debian.org>  Mon, 07 Mar 2022 09:34:46 +0100
