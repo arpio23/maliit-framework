@@ -26,7 +26,7 @@ override_dh_installexamples:
 	dh_installexamples
 
 	# drop Vcs control files from doc:pkg
-	find debian/maliit-framework-doc/ -name .gitignore -delete
+	-find debian/maliit-framework-doc/ -name .gitignore -delete
 
 override_dh_auto_test:
 	xvfb-run -a dh_auto_test --no-parallel
