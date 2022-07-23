@@ -1,3 +1,9 @@
+maliit-framework (2.3.0-1) UNRELEASED; urgency=medium
+
+  * New upstream release.
+
+ -- Mike Gabriel <sunweaver@debian.org>  Sun, 24 Jul 2022 00:02:28 +0200
+
 maliit-framework (2.2.1-2) unstable; urgency=medium
 
   * debian/libmaliit-plugins2.symbols:
