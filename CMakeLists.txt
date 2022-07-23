@@ -1,18 +1,18 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(maliit-framework VERSION 2.2.1)
+project(maliit-framework VERSION 2.3.0)
 
 # Build options
 
 option(enable-docs "Build documentation" ON)
 option(enable-tests "Build tests" ON)
+option(install-tests "Install unit tests" OFF)
 option(enable-examples "Build examples" OFF)
 
 option(enable-glib "Build GLib support" ON)
 
 option(enable-xcb "Compile with xcb support" ON)
 option(enable-wayland "Compile with support for wayland" ON)
-option(enable-wayland-gtk "Compile with support for wayland gtk+" OFF)
 option(enable-qt5-inputcontext "Compile with Qt 5 input context" ON)
 
 option(enable-hwkeyboard "Enable support for the hardware keyboard" ON)
@@ -29,11 +29,6 @@ endif()
 if(NOT DEFINED QT5_MKSPECS_INSTALL_DIR)
     set(QT5_MKSPECS_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/qt5/mkspecs" CACHE PATH
             "Installation directory for Qt 5 mkspecs files [LIB_INSTALL_DIR/qt5/mkspecs]")
-endif()
-
-if(NOT DEFINED GTK3_PLUGINS_INSTALL_DIR)
-    set(GTK3_PLUGINS_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/gtk-3.0/3.0.0" CACHE PATH
-            "Installation directory for Gtk 3 plugins [LIB_INSTALL_DIR/gtk-3.0/3.0.0]")
 endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
@@ -55,7 +50,6 @@ if(enable-wayland)
     find_package(Qt5WaylandClient 5.14 REQUIRED PRIVATE)
     find_package(Qt5XkbCommonSupport REQUIRED PRIVATE)
     pkg_check_modules(XKBCOMMON REQUIRED IMPORTED_TARGET xkbcommon)
-    find_package(Gtk3)
 endif()
 
 include_directories(src common)
@@ -156,6 +150,8 @@ set(PLUGINS_SOURCES
     src/quick/maliitquick.h
     src/abstractplatform.cpp
     src/abstractplatform.h
+    src/logging.cpp
+    src/logging.h
     src/mattributeextensionid.cpp
     src/mattributeextensionid.h
     src/mattributeextensionmanager.cpp
@@ -312,16 +308,6 @@ if(enable-wayland)
     add_library(inputpanel-shell MODULE ${INPUT_PANEL_SHELL_SOURCES})
     target_link_libraries(inputpanel-shell Qt5::WaylandClient PkgConfig::XKBCOMMON Wayland::Client)
     target_include_directories(inputpanel-shell PRIVATE ${Qt5WaylandClient_PRIVATE_INCLUDE_DIRS} ${Qt5XkbCommonSupport_PRIVATE_INCLUDE_DIRS})
-
-    if(enable-wayland-gtk AND TARGET Gtk3::Gtk)
-        add_library(im-wayland MODULE
-                src/gtk/plugins/im-module/gtkimcontextwayland.c
-                src/gtk/plugins/im-module/gtkimcontextwayland.h
-                src/gtk/plugins/im-module/imwayland.c)
-        ecm_add_wayland_client_protocol(IM_WAYLAND_SOURCES PROTOCOL ${WAYLANDPROTOCOLS_PATH}/unstable/text-input/text-input-unstable-v1.xml BASENAME text-input-unstable-v1)
-        target_sources(im-wayland PRIVATE ${IM_WAYLAND_SOURCES})
-        target_link_libraries(im-wayland Gtk3::Gtk)
-    endif()
 endif()
 
 if(enable-examples)
@@ -345,9 +331,6 @@ if(enable-examples)
                 examples/plugins/cxx/override/overrideplugin.cpp
                 examples/plugins/cxx/override/overrideplugin.h)
     target_link_libraries(cxxoverrideplugin maliit-plugins Qt5::Widgets)
-
-    file(COPY examples/plugins/qml/helloworld/helloworld.qml
-        DESTINATION ${CMAKE_BINARY_DIR}/examples/plugins/qml/helloworld)
 endif()
 
 # Documentation
@@ -454,10 +437,6 @@ endif()
 if(enable-wayland)
     install(TARGETS inputpanel-shell
             LIBRARY DESTINATION ${QT5_PLUGINS_INSTALL_DIR}/wayland-shell-integration)
-    if(enable-wayland-gtk AND TARGET Gtk3::Gtk)
-        install(TARGETS im-wayland
-                LIBRARY DESTINATION ${GTK3_PLUGINS_INSTALL_DIR}/immodules)
-    endif()
 endif()
 
 if(enable-dbus-activation)
@@ -520,8 +499,8 @@ if(enable-tests)
     target_link_libraries(test-utils PUBLIC Qt5::Core Qt5::Gui Qt5::Test maliit-connection)
     target_include_directories(test-utils INTERFACE tests/utils)
     target_compile_definitions(test-utils PUBLIC
-            -DMALIIT_TEST_PLUGINS_DIR="${CMAKE_INSTALL_PREFIX}/lib/maliit-framework-tests/plugins"
-            -DMALIIT_TEST_DATA_PATH="${CMAKE_INSTALL_PREFIX}/lib/maliit-framework-tests"
+            -DMALIIT_TEST_PLUGINS_DIR="${CMAKE_INSTALL_FULL_LIBDIR}/maliit-framework-tests/plugins"
+            -DMALIIT_TEST_DATA_PATH="${CMAKE_INSTALL_FULL_LIBDIR}/maliit-framework-tests"
             -DIN_TREE_TEST_PLUGIN_DIR="${CMAKE_SOURCE_DIR}/examples/plugins")
 
     add_library(test-stubs STATIC
@@ -542,6 +521,9 @@ if(enable-tests)
         add_test(${name} ${name})
 
         set(test_targets ${test_targets} ${name} PARENT_SCOPE)
+        if(install-tests)
+            install(TARGETS ${name} DESTINATION ${CMAKE_INSTALL_LIBDIR}/maliit-framework-tests/${name})
+        endif()
     endfunction()
 
     create_test(sanitychecks)
@@ -555,6 +537,9 @@ if(enable-tests)
     create_test(ut_mkeyoverride)
     create_test(ft_exampleplugin)
     create_test(ft_mimpluginmanager test-stubs ${DUMMY_PLUGINS})
+
+    file(COPY tests/qmlplugin/helloworld.qml
+         DESTINATION ${CMAKE_BINARY_DIR}/examples/plugins/qml/helloworld)
 
     set_property(TEST ${test_targets} PROPERTY ENVIRONMENT
             TESTING_IN_SANDBOX=1
@@ -570,10 +555,21 @@ if(enable-tests)
         target_link_libraries(ut_maliit_glib_settings GLib2::GLib GLib2::GIO maliit-glib)
 
         add_test(ut_maliit_glib_settings ut_maliit_glib_settings)
+        if(install-tests)
+            install(TARGETS ut_maliit_glib_settings DESTINATION ${CMAKE_INSTALL_LIBDIR}/maliit-framework-tests/ut_maliit_glib_settings)
+        endif()
+    endif()
+
+    if(install-tests)
+        install(FILES tests/qmlplugin/helloworld.qml
+                DESTINATION ${CMAKE_INSTALL_LIBDIR}/maliit-framework-tests/plugins/qml/helloworld)
+
+        install(TARGETS ${DUMMY_PLUGINS} DESTINATION ${CMAKE_INSTALL_LIBDIR}/maliit-framework-tests/plugins)
+        install(DIRECTORY tests/ut_mattributeextensionmanager/
+                DESTINATION ${CMAKE_INSTALL_LIBDIR}/maliit-framework-tests/ut_mattributeextensionmanager
+                FILES_MATCHING PATTERN "*.xml")
+        install(DIRECTORY tests/ut_mimpluginmanager/
+                DESTINATION ${CMAKE_INSTALL_LIBDIR}/maliit-framework-tests/ut_mimpluginmanager
+                FILES_MATCHING PATTERN "*.xml")
     endif()
 endif()
-
-add_custom_target(install_${PROJECT_NAME}
-        ${CMAKE_MAKE_PROGRAM} install
-        DEPENDS maliit-server
-        COMMENT "Installing ${PROJECT_NAME}")
