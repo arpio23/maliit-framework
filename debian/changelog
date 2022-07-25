@@ -1,6 +1,8 @@
 maliit-framework (2.3.0-1) UNRELEASED; urgency=medium
 
   * New upstream release.
+  * debian/control:
+    + Bump Standards-Version: to 4.6.1. No changes needed.
 
  -- Mike Gabriel <sunweaver@debian.org>  Sun, 24 Jul 2022 00:02:28 +0200
 
