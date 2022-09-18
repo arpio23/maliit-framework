@@ -1,0 +1,27 @@
+Description: ut_mimserveroptions: Move the operator== definition to global namespace
+ With gcc-12 having the operator== in anonymous namespace for a struct which
+ is in the global namespace results in a lengthy compilation error. Moving
+ this non-member function into the global namespace fixes the issue.
+Origin: upstream, https://github.com/maliit/framework/commit/86e55980e3025678
+Last-Update: 2022-09-18
+
+--- a/tests/ut_mimserveroptions/ut_mimserveroptions.cpp
++++ b/tests/ut_mimserveroptions/ut_mimserveroptions.cpp
+@@ -42,12 +42,12 @@ namespace {
+                           "-testability", "TESTABILITY", "-qdevel", "-reverse",
+                           "-stylesheet", "-widgetcount", "-qdebug",
+                           "-software" } };
++}
+ 
+-    bool operator==(const MImServerCommonOptions &x,
+-                    const MImServerCommonOptions &y)
+-    {
+-        return (x.showHelp == y.showHelp);
+-    }
++bool operator==(const MImServerCommonOptions &x,
++                const MImServerCommonOptions &y)
++{
++    return (x.showHelp == y.showHelp);
+ }
+ 
+ 

@@ -1,3 +1,15 @@
+maliit-framework (2.2.1-2.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Add two patches to fix FTBFS (closes: #1016264).
+    - debian/patches/0001_move-operator-definition.patch: Move the
+      operator== definition to global namespace.
+    - debian/patches/1001_fix-segfault.patch: Prevent QList returned
+      by subject->pluginDescriptions from being deleted.
+  * Update debian/libmaliit-plugins2.symbols from the current build logs.
+
+ -- Dmitry Shachnev <mitya57@debian.org>  Sun, 18 Sep 2022 16:55:17 +0300
+
 maliit-framework (2.2.1-2) unstable; urgency=medium
 
   * debian/libmaliit-plugins2.symbols:
