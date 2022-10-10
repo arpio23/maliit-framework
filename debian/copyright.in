@@ -29,14 +29,6 @@ Files: common/maliit/namespace.h
  examples/plugins/cxx/override/overrideinputmethod.h
  examples/plugins/cxx/override/overrideplugin.cpp
  examples/plugins/cxx/override/overrideplugin.h
- examples/plugins/qml/cyclekeys/CycleKey.qml
- examples/plugins/qml/cyclekeys/cyclekeysplugin.cpp
- examples/plugins/qml/cyclekeys/cyclekeysplugin.h
- examples/plugins/qml/cyclekeys/main.qml
- examples/plugins/qml/helloworld/helloworld.qml
- examples/plugins/qml/override/override.qml
- examples/plugins/qml/override/overrideplugin.cpp
- examples/plugins/qml/override/overrideplugin.h
  input-context/minputcontext.h
  passthroughserver/main.cpp
  src/maliit/plugins/abstractinputmethod.cpp
@@ -93,6 +85,7 @@ Files: common/maliit/namespace.h
  src/quick/maliitquick.h
  tests/ft_exampleplugin/ft_exampleplugin.cpp
  tests/ft_exampleplugin/ft_exampleplugin.h
+ tests/qmlplugin/helloworld.qml
  tests/sanitychecks/sanitychecks.cpp
  tests/sanitychecks/sanitychecks.h
  tests/stubs/fakeproperty.cpp
@@ -124,7 +117,6 @@ Files: CMakeLists.txt
  cmake/ECMFindModuleHelpers.cmake
  cmake/FindGIO.cmake
  cmake/FindGLib2.cmake
- cmake/FindGtk3.cmake
  common/maliit-framework.pc.in
  common/maliit-framework.prf.in
  connection/README.weston
@@ -132,6 +124,7 @@ Files: CMakeLists.txt
  dbus_interfaces/minputmethodcontext1interface.xml
  dbus_interfaces/minputmethodserver1interface.xml
  debian/control
+ debian/files
  debian/libmaliit-glib-dev.install
  debian/libmaliit-glib2.install
  debian/libmaliit-glib2.symbols
@@ -143,15 +136,18 @@ Files: CMakeLists.txt
  debian/maliit-framework-doc.install
  debian/maliit-framework-doc.links
  debian/maliit-framework.install
+ debian/maliit-framework.lintian-overrides
  debian/maliit-framework.maintscript
  debian/maliit-framework.postinst
  debian/maliit-framework.prerm
  debian/maliit-framework.sh
- debian/patches/qtwaylandscanner-path.diff
+ debian/patches/0001_move-the-operator==-definition-to-global-namespace.patch
+ debian/patches/0002_prevent-qlist-returned-by-subject-pluginDescriptions-from-being-deleted.patch
+ debian/patches/0003_fix-stack-smashing.patch
+ debian/patches/README
  debian/patches/series
  debian/rules
  debian/source/format
- debian/source/lintian-overrides
  debian/upstream
  debian/watch
  debian/xinput/maliit
@@ -174,8 +170,6 @@ Files: CMakeLists.txt
  examples/apps/plainqt/mainwindow.cpp
  examples/apps/plainqt/mainwindow.h
  examples/apps/qml/enterKeyCustomization.qml
- examples/plugins/qml/cyclekeys/cyclekeys.qrc
- examples/plugins/qml/override/override.qrc
  input-context/maliit.json
  maliit-glib/MaliitGLibConfig.cmake.in
  maliit-glib/maliit-docs.xml
@@ -184,7 +178,6 @@ Files: CMakeLists.txt
  maliit-glib/maliit-sections.txt
  maliit-glib/maliitmarshallers.list
  src/MaliitPluginsConfig.cmake.in
- src/gtk/plugins/im-module/README.md
  src/maliit-defines.prf.in
  src/maliit-plugins.pc.in
  src/maliit-plugins.prf.in
@@ -295,17 +288,16 @@ Copyright: 2012, Mattia Barbon <mattia@develer.com>
 License: GNU Lesser General Public License, Version 2.1
  FIXME
 
-Files: src/gtk/plugins/im-module/gtkimcontextwayland.c
- src/gtk/plugins/im-module/gtkimcontextwayland.h
- src/gtk/plugins/im-module/imwayland.c
-Copyright: 2013, 2017, Jan Arne Petersen
-License: GNU Library General Public License v2 or later
- FIXME
-
 Files: src/mimsettingsqsettings.cpp
  src/mimsettingsqsettings.h
 Copyright: 2012, Canonical Ltd
   2012, Mattia Barbon <mattia@develer.com>
+License: GNU Lesser General Public License, Version 2.1
+ FIXME
+
+Files: src/logging.cpp
+ src/logging.h
+Copyright: 2022, Pekka Vuorela
 License: GNU Lesser General Public License, Version 2.1
  FIXME
 
@@ -365,28 +357,34 @@ Copyright: -format/1.0/
 License: UNKNOWN
  FIXME
 
+Files: debian/source/lintian-overrides
+Copyright: -information debian/copyright LICENSE.LGPL
+License: UNKNOWN
+ FIXME
+
 Files: cmake/FindUDev.cmake
-Copyright: Text: 2010 Rafael FernÃƒÂ¡ndez LÃƒÂ³pez <ereslibre@kde.org>
+Copyright: Text: 2010 Rafael FernÃ¡ndez LÃ³pez <ereslibre@kde.org>
   Text: 2019 Volker Krause <vkrause@kde.org>
 License: UNKNOWN
  FIXME
 
 Files: cmake/FindWayland.cmake
 Copyright: Text: 2014 Alex Merry <alex.merry@kde.org>
-  Text: 2014 Martin GrÃƒÂ¤ÃƒÂŸlin <mgraesslin@kde.org>
+  Text: 2014 Martin GrÃ¤ÃŸlin <mgraesslin@kde.org>
 License: UNKNOWN
  FIXME
 
 Files: debian/changelog
-Copyright: attributions.
+Copyright: Use secure URL in Format: field.
+  attributions.
 License: UNKNOWN
  FIXME
 
 Files: doc/images/maliit-fw-components.odg
-Copyright: Ã»Ã‡;ÃˆÃ‰7uÂ‡VÂ¢/bÃ½}Â—
-  Ã¼"7,ÃGÃˆPHÃ– n@[ÂÃ±}Â¯Ã†Â¯Ã’ÂwLÂ®;Â–ÃµÃ†Â¼y1T$bJÂŠÃÃƒ[[ YdÂ´Â¶Ã©ÂªÃš/RÂˆÃ‚fÂ¾Â¸`Â˜Â²Â²ÃˆÃ†"w'
-  Ã¼Ã±|Ã‘Ã¼Ã…ÃŒÃ’Â”eÂ‡pÃ¾Ã´SyÃÂ–Â¦ÂŒEy'Ã…
-  Ã¾Ã•/Â´
+Copyright: ûÇ;ÈÉ7u‡V¢/bı}—
+  ü"7,ÁGÈPHÖ n@[ñ}¯Æ¯ÒwL®;–õÆ¼y1T$bJŠÁÃ[[ Yd´¶éªÚ/RˆÂf¾¸`˜²²ÈÆ"w'
+  üñ|ÑüÅÌÒ”e‡pşôSyÍ–¦ŒEy'Å
+  şÕ/´
 License: UNKNOWN
  FIXME
 
