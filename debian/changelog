@@ -1,10 +1,21 @@
-maliit-framework (2.3.0-1) UNRELEASED; urgency=medium
+maliit-framework (2.3.0-1) unstable; urgency=medium
 
   * New upstream release.
+  * debian/patches:
+    + Add 0001_move-the-operator==-definition-to-global-namespace.patch. Fix
+      FTBFS against gcc-12.
+    + Add 0002_prevent-qlist-returned-by-subject-pluginDescriptions-from-being-
+      deleted.patch and 0003_fix-stack-smashing.patch. Fix unit testing.
+  * debian/libmaliit-plugins2.symbols:
+    + Update symbols.
   * debian/control:
     + Bump Standards-Version: to 4.6.1. No changes needed.
+  * lintian: Update overrides.
+  * debian/copyright:
+    + Update auto-generated copyright.in file.
+    + Update copyright attributions.
 
- -- Mike Gabriel <sunweaver@debian.org>  Sun, 24 Jul 2022 00:02:28 +0200
+ -- Mike Gabriel <sunweaver@debian.org>  Sun, 24 Jul 2022 00:06:25 +0200
 
 maliit-framework (2.2.1-2.1) unstable; urgency=medium
 
