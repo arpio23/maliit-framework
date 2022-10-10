@@ -1,2 +1,3 @@
 0001_move-the-operator==-definition-to-global-namespace.patch
-1001_fix-segfault.patch
+0002_prevent-qlist-returned-by-subject-pluginDescriptions-from-being-deleted.patch
+0003_fix-stack-smashing.patch
