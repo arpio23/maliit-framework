@@ -1,2 +1,2 @@
-0001_move-operator-definition.patch
+0001_move-the-operator==-definition-to-global-namespace.patch
 1001_fix-segfault.patch
