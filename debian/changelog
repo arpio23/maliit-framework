@@ -2,12 +2,14 @@ maliit-framework (2.3.0-1) unstable; urgency=medium
 
   * New upstream release.
   * debian/patches:
-    + Add 0001_move-the-operator==-definition-to-global-namespace.patch. Fix
-      FTBFS against gcc-12.
+    + Use 0001_move-the-operator==-definition-to-global-namespace.patch from
+      upstream. Fix FTBFS against gcc-12. Drop
+      0001_move-operator-definition.patch.
     + Add 0002_prevent-qlist-returned-by-subject-pluginDescriptions-from-being-
       deleted.patch and 0003_fix-stack-smashing.patch. Fix unit testing.
+      Drop 1001_fix-segfault.patch again.
   * debian/libmaliit-plugins2.symbols:
-    + Update symbols.
+    + Update symbols for 2.3.0.
   * debian/control:
     + Bump Standards-Version: to 4.6.1. No changes needed.
   * lintian: Update overrides.
