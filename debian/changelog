@@ -1,3 +1,16 @@
+maliit-framework (2.3.0-2) unstable; urgency=medium
+
+  [ Mike Gabriel ]
+  * d/changelog: Post-upload modify 2.3.0-1 to better describe what changed
+    since NMU 2.2.1-2.1.
+
+  [ Dmitry Shachnev ]
+  * Update debian/libmaliit-plugins2.symbols from buildds’ logs.
+  * Mark some symbols as substs.
+  * Mark some symbols as optional to fix FTBFS with -O3.
+
+ -- Mike Gabriel <sunweaver@debian.org>  Wed, 12 Oct 2022 01:07:16 +0200
+
 maliit-framework (2.3.0-1) unstable; urgency=medium
 
   * New upstream release.
