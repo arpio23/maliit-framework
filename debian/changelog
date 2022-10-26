@@ -1,3 +1,10 @@
+maliit-framework (2.3.0-3) unstable; urgency=medium
+
+  * debian/watch:
+    + Adjust watch file to Github release/tag URLs.
+
+ -- Mike Gabriel <sunweaver@debian.org>  Wed, 26 Oct 2022 21:12:37 +0200
+
 maliit-framework (2.3.0-2) unstable; urgency=medium
 
   [ Mike Gabriel ]
