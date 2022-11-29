@@ -1,4 +1,4 @@
-# SymbolsHelper-Confirmed: 2.3.0 amd64
+# SymbolsHelper-Confirmed: 2.3.0 amd64 arm64 armel armhf i386 mips64el mipsel powerpc ppc64 ppc64el riscv64 s390x x32
 libmaliit-plugins.so.2 libmaliit-plugins2 #MINVER#
 * Build-Depends-Package: maliit-framework-dev
  _Z10lcMaliitFwv@Base 2.3.0
@@ -98,7 +98,7 @@ libmaliit-plugins.so.2 libmaliit-plugins2 #MINVER#
  _ZN16MIMPluginManager18handleClientChangeEv@Base 2.3.0
  _ZN16MIMPluginManager18updateKeyOverridesEv@Base 2.3.0
  _ZN16MIMPluginManager20handlePreeditChangedERK7QStringi@Base 2.3.0
- _ZN16MIMPluginManager21handleAppFocusChangedEy@Base 2.3.0
+ (subst)_ZN16MIMPluginManager21handleAppFocusChangedE{quintptr}@Base 2.3.0
  _ZN16MIMPluginManager21registerPluginSettingERK7QStringS2_S2_S2_N6Maliit16SettingEntryTypeERK4QMapIS0_8QVariantE@Base 2.3.0
  _ZN16MIMPluginManager21setAllSubViewsEnabledEb@Base 2.3.0
  _ZN16MIMPluginManager23pluginSettingsRequestedEiRK7QString@Base 2.3.0
@@ -509,7 +509,7 @@ libmaliit-plugins.so.2 libmaliit-plugins2 #MINVER#
  _ZN23MInputContextConnection11qt_metacallEN11QMetaObject4CallEiPPv@Base 2.3.0
  _ZN23MInputContextConnection11qt_metacastEPKc@Base 2.3.0
  _ZN23MInputContextConnection11setLanguageERK7QString@Base 2.3.0
- _ZN23MInputContextConnection12focusChangedEy@Base 2.3.0
+ (subst)_ZN23MInputContextConnection12focusChangedE{quintptr}@Base 2.3.0
  _ZN23MInputContextConnection12hasSelectionERb@Base 2.3.0
  _ZN23MInputContextConnection12invokeActionERK7QStringRK12QKeySequence@Base 2.3.0
  _ZN23MInputContextConnection12sendKeyEventERK9QKeyEventN6Maliit16EventRequestTypeE@Base 2.3.0
@@ -811,7 +811,7 @@ libmaliit-plugins.so.2 libmaliit-plugins2 #MINVER#
  _ZN6Maliit11WindowGroup16onVisibleChangedEb@Base 2.3.0
  _ZN6Maliit11WindowGroup16staticMetaObjectE@Base 2.3.0
  _ZN6Maliit11WindowGroup18setInputMethodAreaERK7QRegionP7QWindow@Base 2.3.0
- _ZN6Maliit11WindowGroup20setApplicationWindowEy@Base 2.3.0
+ (subst)_ZN6Maliit11WindowGroup20setApplicationWindowE{quintptr}@Base 2.3.0
  _ZN6Maliit11WindowGroup21updateInputMethodAreaEv@Base 2.3.0
  _ZN6Maliit11WindowGroup22inputMethodAreaChangedERK7QRegion@Base 2.3.0
  _ZN6Maliit11WindowGroup8activateEv@Base 2.3.0
@@ -822,7 +822,7 @@ libmaliit-plugins.so.2 libmaliit-plugins2 #MINVER#
  _ZN6Maliit11WindowGroupD2Ev@Base 2.3.0
  _ZN6Maliit11XCBPlatform14setInputRegionEP7QWindowRK7QRegion@Base 2.3.0
  _ZN6Maliit11XCBPlatform15setupInputPanelEP7QWindowNS_8PositionE@Base 2.3.0
- _ZN6Maliit11XCBPlatform20setApplicationWindowEP7QWindowy@Base 2.3.0
+ (subst)_ZN6Maliit11XCBPlatform20setApplicationWindowEP7QWindow{quintptr}@Base 2.3.0
  _ZN6Maliit12InputContext4DBus12FixedAddress11qt_metacallEN11QMetaObject4CallEiPPv@Base 2.3.0
  _ZN6Maliit12InputContext4DBus12FixedAddress11qt_metacastEPKc@Base 2.3.0
  _ZN6Maliit12InputContext4DBus12FixedAddress16staticMetaObjectE@Base 2.3.0
@@ -855,7 +855,7 @@ libmaliit-plugins.so.2 libmaliit-plugins2 #MINVER#
  _ZN6Maliit15WaylandPlatformD0Ev@Base 2.3.0
  _ZN6Maliit15WaylandPlatformD1Ev@Base 2.3.0
  _ZN6Maliit15WaylandPlatformD2Ev@Base 2.3.0
- _ZN6Maliit16AbstractPlatform20setApplicationWindowEP7QWindowy@Base 2.3.0
+ (subst)_ZN6Maliit16AbstractPlatform20setApplicationWindowEP7QWindow{quintptr}@Base 2.3.0
  _ZN6Maliit16AbstractPlatformD0Ev@Base 2.3.0
  _ZN6Maliit16AbstractPlatformD1Ev@Base 2.3.0
  _ZN6Maliit16AbstractPlatformD2Ev@Base 2.3.0
@@ -1058,7 +1058,7 @@ libmaliit-plugins.so.2 libmaliit-plugins2 #MINVER#
  (optional=templinst)_ZN9QtPrivate11QSlotObjectIM20MAbstractInputMethodFviENS_4ListIJiEEEvE4implEiPNS_15QSlotObjectBaseEP7QObjectPPvPb@Base 2.3.0
  (optional=templinst)_ZN9QtPrivate11QSlotObjectIM20MAbstractInputMethodFvvENS_4ListIJEEEvE4implEiPNS_15QSlotObjectBaseEP7QObjectPPvPb@Base 2.3.0
  (optional=templinst)_ZN9QtPrivate11QSlotObjectIMN6Maliit11WindowGroupEFvvENS_4ListIJEEEvE4implEiPNS_15QSlotObjectBaseEP7QObjectPPvPb@Base 2.3.0
- (optional=templinst)_ZN9QtPrivate11QSlotObjectIMN6Maliit11WindowGroupEFvyENS_4ListIJyEEEvE4implEiPNS_15QSlotObjectBaseEP7QObjectPPvPb@Base 2.3.0
+ (optional=templinst|subst)_ZN9QtPrivate11QSlotObjectIMN6Maliit11WindowGroupEFv{quintptr}ENS_4ListIJ{quintptr}EEEvE4implEiPNS_15QSlotObjectBaseEP7QObjectPPvPb@Base 2.3.0
  (optional=templinst)_ZN9QtPrivate11QSlotObjectIMN6Maliit21StandaloneInputMethodEFvjRK4QMapI7QString8QVariantES8_bENS_4ListIJjS8_S8_bEEEvE4implEiPNS_15QSlotObjectBaseEP7QObjectPPvPb@Base 2.3.0
  (optional=templinst)_ZN9QtPrivate16ConverterFunctorI14QSharedPointerI12MKeyOverrideEP7QObjectNS_27QSmartPointerConvertFunctorIS3_EEE7convertEPKNS_25AbstractConverterFunctionEPKvPv@Base 2.3.0
  (optional=templinst)_ZN9QtPrivate16ConverterFunctorI5QListI21MImPluginSettingsInfoEN17QtMetaTypePrivate23QSequentialIterableImplENS4_33QSequentialIterableConvertFunctorIS3_EEE7convertEPKNS_25AbstractConverterFunctionEPKvPv@Base 2.3.0
