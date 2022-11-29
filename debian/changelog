@@ -1,3 +1,14 @@
+maliit-framework (2.3.0-3.1) unstable; urgency=medium
+
+  * Non-maintainer upload
+  * First step to build with LTO enabled (see bug 1024999):
+    + debian/rules: Enable LTO
+    + create d/libmaliit-plugins2.symbols for amd64 only
+  * debian/rules:
+    + Use Bsymbolic-functions in Ubuntu to make the tests pass
+
+ -- Gunnar Hjalmarsson <gunnarhj@debian.org>  Tue, 29 Nov 2022 01:42:08 +0100
+
 maliit-framework (2.3.0-3) unstable; urgency=medium
 
   * debian/watch:
