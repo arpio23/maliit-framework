@@ -2,7 +2,7 @@
 
 case $XDG_SESSION_DESKTOP in
   ubuntu-touch|unity8*)
-    export GTK_IM_MODULE=Maliit
-    export QT_IM_MODULE=maliitphablet
+    export GTK_IM_MODULE=maliit
+    export QT_IM_MODULE=maliit
     ;;
 esac
