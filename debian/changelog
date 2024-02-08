@@ -1,3 +1,16 @@
+maliit-framework (2.3.0-4) unstable; urgency=medium
+
+  * debian/maliit-framework.sh:
+    + Correctly set GTK_IM_MODULE/QT_IM_MODULE.
+    + Also set GTK_IM_MODULE/QT_IM_MODULE for Lomiri.
+  * debian/xinput/maliit:
+    + Adjust to correct values for GTK_IM_MODULE / QT_IM_MODULE.
+  * debian/patches:
+    + Add 0004_connection-Move-dbus-socket-to-well-known-path-in-XD.patch. Move
+      dbus socket to well known path in XDG_RUNTIME_DIR.
+
+ -- Mike Gabriel <sunweaver@debian.org>  Thu, 08 Feb 2024 08:51:15 +0100
+
 maliit-framework (2.3.0-3.2) unstable; urgency=medium
 
   * Non-maintainer upload
