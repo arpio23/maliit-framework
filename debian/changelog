@@ -1,4 +1,4 @@
-maliit-framework (2.3.0-5) UNRELEASED; urgency=medium
+maliit-framework (2.3.0-5) unstable; urgency=medium
 
   * debian/patches:
     + Add 1001_input-context-look-for-inputMethodExtensions-at-the-parents-
@@ -10,8 +10,11 @@ maliit-framework (2.3.0-5) UNRELEASED; urgency=medium
     + Drop pkgkde_symbolshelper usage.
   * debian/rules:
     + Build with examples.
+  * debian/control:
+    + Bump Standards-Version to 4.7.0. No changes needed.
+    + In B-D, switch from pkg-config to pkgconf.
 
- -- Mike Gabriel <sunweaver@debian.org>  Sat, 24 Aug 2024 22:13:38 +0200
+ -- Mike Gabriel <sunweaver@debian.org>  Sat, 24 Aug 2024 22:31:04 +0200
 
 maliit-framework (2.3.0-4) unstable; urgency=medium
 
