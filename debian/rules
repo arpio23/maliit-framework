@@ -1,6 +1,8 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
 
+NULL =
+
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all optimize=+lto
 
 # makes the tests pass in Ubuntu
@@ -12,7 +14,11 @@ DPKG_EXPORT_BUILDFLAGS = 1
 include /usr/share/dpkg/buildflags.mk
 
 %:
-	dh $@
+	dh $@ --
+
+override_dh_auto_configure:
+	dh_auto_configure --  -Denable_examples=ON \
+	                      $(NULL)
 
 override_dh_install:
 	# re-arrange files in doc:pkg
