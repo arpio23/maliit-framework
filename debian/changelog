@@ -1,3 +1,18 @@
+maliit-framework (2.3.0-5) UNRELEASED; urgency=medium
+
+  * debian/patches:
+    + Add 1001_input-context-look-for-inputMethodExtensions-at-the-parents-
+      too.patch. Provide means for modifying key labels in maliit-keyboard.
+  * debian/libmaliit-plugins2.symbols:
+    + Drop file (C++ symbols, the .symbol file is causing more woes than being
+      helpful).
+  * debian/{rules,control}:
+    + Drop pkgkde_symbolshelper usage.
+  * debian/rules:
+    + Build with examples.
+
+ -- Mike Gabriel <sunweaver@debian.org>  Sat, 24 Aug 2024 22:13:38 +0200
+
 maliit-framework (2.3.0-4) unstable; urgency=medium
 
   * debian/maliit-framework.sh:
