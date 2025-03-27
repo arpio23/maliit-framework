@@ -7,10 +7,8 @@ Uploaders:
 Build-Depends: cmake,
                debhelper-compat (= 13),
                doxygen,
-               graphviz,
                libdbus-1-dev,
                libglib2.0-dev,
-               libkf5wayland-dev,
                libmtdev-dev,
                libudev-dev,
                libwayland-dev,
@@ -19,15 +17,19 @@ Build-Depends: cmake,
                libxcb-xfixes0-dev,
                libxext-dev,
                pkgconf,
-               qml-module-qtquick2,
-               qtbase5-dev (>= 5.2),
-               qtbase5-private-dev,
-               qtdeclarative5-dev,
-               qtwayland5-dev-tools,
-               qtwayland5-private-dev,
+               qml6-module-qtquick,
+               qt6-base-dev,
+               qt6-base-private-dev,
+               qt6-base-dev-tools,
+               qt6-declarative-dev,
+               qt6-declarative-dev-tools,
+               qt6-wayland-dev,
+               qt6-wayland-dev-tools,
+               qt6-wayland-private-dev,
                wayland-protocols,
-               xauth,
+               liblayershellqtinterface-dev,
                xvfb,
+               xauth,
 Standards-Version: 4.7.0
 Homepage: https://github.com/maliit/framework
 Vcs-Browser: https://salsa.debian.org/debian/maliit-framework
@@ -37,7 +39,7 @@ Rules-Requires-Root: no
 Package: maliit-framework
 Architecture: any
 Section: misc
-Depends: ${misc:Depends}, ${shlibs:Depends}, qml-module-qtquick-localstorage
+Depends: ${misc:Depends}, ${shlibs:Depends}, qml6-module-qtquick-localstorage, liblayershellqtinterface6
 Recommends: maliit-inputmethod-plugin
 Breaks: gir1.2-maliit-1.0 (<< ${source:Version}),
         libmaliit-glib0 (<< ${source:Version}),

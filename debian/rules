@@ -22,7 +22,7 @@ override_dh_auto_configure:
 
 override_dh_install:
 	# re-arrange files in doc:pkg
-	mv debian/tmp/usr/share/doc/maliit-framework-doc debian/tmp/usr/share/doc/maliit-framework/html
+	mv debian/tmp/usr/share/doc/maliit6-framework-doc debian/tmp/usr/share/doc/maliit-framework/html
 	rm debian/tmp/usr/share/doc/maliit-framework/LICENSE.LGPL*
 
 	# drop build path from generated .html files
