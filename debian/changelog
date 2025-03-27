@@ -1,0 +1,183 @@
+maliit-framework (2.3.0-5) unstable; urgency=medium
+
+  * debian/patches:
+    + Add 1001_input-context-look-for-inputMethodExtensions-at-the-parents-
+      too.patch. Provide means for modifying key labels in maliit-keyboard.
+  * debian/libmaliit-plugins2.symbols:
+    + Drop file (C++ symbols, the .symbol file is causing more woes than being
+      helpful).
+  * debian/{rules,control}:
+    + Drop pkgkde_symbolshelper usage.
+  * debian/rules:
+    + Build with examples.
+  * debian/control:
+    + Bump Standards-Version to 4.7.0. No changes needed.
+    + In B-D, switch from pkg-config to pkgconf.
+
+ -- Mike Gabriel <sunweaver@debian.org>  Sat, 24 Aug 2024 22:31:04 +0200
+
+maliit-framework (2.3.0-4) unstable; urgency=medium
+
+  * debian/maliit-framework.sh:
+    + Correctly set GTK_IM_MODULE/QT_IM_MODULE.
+    + Also set GTK_IM_MODULE/QT_IM_MODULE for Lomiri.
+  * debian/xinput/maliit:
+    + Adjust to correct values for GTK_IM_MODULE / QT_IM_MODULE.
+  * debian/patches:
+    + Add 0004_connection-Move-dbus-socket-to-well-known-path-in-XD.patch. Move
+      dbus socket to well known path in XDG_RUNTIME_DIR.
+
+ -- Mike Gabriel <sunweaver@debian.org>  Thu, 08 Feb 2024 08:51:15 +0100
+
+maliit-framework (2.3.0-3.2) unstable; urgency=medium
+
+  * Non-maintainer upload
+  * debian/libmaliit-plugins2.symbols:
+    + Update other archs for LTO using buildd logs (closes: #1024999)
+
+ -- Gunnar Hjalmarsson <gunnarhj@debian.org>  Tue, 29 Nov 2022 13:46:06 +0100
+
+maliit-framework (2.3.0-3.1) unstable; urgency=medium
+
+  * Non-maintainer upload
+  * First step to build with LTO enabled (see bug 1024999):
+    + debian/rules: Enable LTO
+    + create d/libmaliit-plugins2.symbols for amd64 only
+  * debian/rules:
+    + Use Bsymbolic-functions in Ubuntu to make the tests pass
+
+ -- Gunnar Hjalmarsson <gunnarhj@debian.org>  Tue, 29 Nov 2022 01:42:08 +0100
+
+maliit-framework (2.3.0-3) unstable; urgency=medium
+
+  * debian/watch:
+    + Adjust watch file to Github release/tag URLs.
+
+ -- Mike Gabriel <sunweaver@debian.org>  Wed, 26 Oct 2022 21:12:37 +0200
+
+maliit-framework (2.3.0-2) unstable; urgency=medium
+
+  [ Mike Gabriel ]
+  * d/changelog: Post-upload modify 2.3.0-1 to better describe what changed
+    since NMU 2.2.1-2.1.
+
+  [ Dmitry Shachnev ]
+  * Update debian/libmaliit-plugins2.symbols from buildds’ logs.
+  * Mark some symbols as substs.
+  * Mark some symbols as optional to fix FTBFS with -O3.
+
+ -- Mike Gabriel <sunweaver@debian.org>  Wed, 12 Oct 2022 01:07:16 +0200
+
+maliit-framework (2.3.0-1) unstable; urgency=medium
+
+  * New upstream release.
+  * debian/patches:
+    + Use 0001_move-the-operator==-definition-to-global-namespace.patch from
+      upstream. Fix FTBFS against gcc-12. Drop
+      0001_move-operator-definition.patch.
+    + Add 0002_prevent-qlist-returned-by-subject-pluginDescriptions-from-being-
+      deleted.patch and 0003_fix-stack-smashing.patch. Fix unit testing.
+      Drop 1001_fix-segfault.patch again.
+  * debian/libmaliit-plugins2.symbols:
+    + Update symbols for 2.3.0.
+  * debian/control:
+    + Bump Standards-Version: to 4.6.1. No changes needed.
+  * lintian: Update overrides.
+  * debian/copyright:
+    + Update auto-generated copyright.in file.
+    + Update copyright attributions.
+
+ -- Mike Gabriel <sunweaver@debian.org>  Sun, 24 Jul 2022 00:06:25 +0200
+
+maliit-framework (2.2.1-2.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Add two patches to fix FTBFS (closes: #1016264).
+    - debian/patches/0001_move-operator-definition.patch: Move the
+      operator== definition to global namespace.
+    - debian/patches/1001_fix-segfault.patch: Prevent QList returned
+      by subject->pluginDescriptions from being deleted.
+  * Update debian/libmaliit-plugins2.symbols from the current build logs.
+
+ -- Dmitry Shachnev <mitya57@debian.org>  Sun, 18 Sep 2022 16:55:17 +0300
+
+maliit-framework (2.2.1-2) unstable; urgency=medium
+
+  * debian/libmaliit-plugins2.symbols:
+    + Update for 2.2.1 using pkgkde-symbols-helper tool.
+
+ -- Mike Gabriel <sunweaver@debian.org>  Sat, 25 Jun 2022 16:04:48 +0200
+
+maliit-framework (2.2.1-1) unstable; urgency=medium
+
+  * New upstream release.
+  * debian/control:
+    + Add B-D: qml-module-qtquick2.
+  * debian/patches:
+    + Drop 1001_skip-Ut_MInputMethodQuickPlugin_testQmlSetup_unittest.patch.
+      Test failure issue resolved if qml-module-qtquick2 is added to B-D.
+  * debian/rules:
+    + Fix binary-only builds in dh_installexamples override, ignore failures
+      if arch:all pkg maliit-framework-doc has not been built.
+
+ -- Mike Gabriel <sunweaver@debian.org>  Sat, 25 Jun 2022 14:59:47 +0200
+
+maliit-framework (2.2.0-1) unstable; urgency=medium
+
+  [ Norbert Preining ]
+  * Prepare initial packaging of v2.0.0.
+
+  [ Mike Gabriel ]
+  * Initial upload to Debian. (Closes: #991528).
+  * debian/patches:
+    + Add README file explaining our patch naming scheme.
+    + Drop qtwaylandscanner-path.diff. Requirement obsolete, issue has been
+      addressed upstream.
+    + Add 1001_skip-Ut_MInputMethodQuickPlugin_testQmlSetup_unittest.patch
+      as it currently fails.
+  * debian/control:
+    + Drop dbg:pkg.
+    + Fix Section: field: docs -> doc.
+    + Bump Standards-Version: to 4.6.0. No changes needed.
+    + More proper LONG_DESCRIPTION for the doc:pkg.
+    + Add B-D: graphviz (dot executable required by Doxygen).
+    + Switch Priority: from extra to optional.
+    + Adjust Vcs-*: fields. Plan is to (co-)maintain the src:pkg with the Qt/KDE
+      team in group Debian on salsa.debian.org.
+    + Don't reference bin:pkgs not shipped in this src:pkg via ${source:Version}
+      in B:/R: relations.
+    + Wrap Depends: fields into multi-line fields.
+    + Some Section: field adjustments. Thanks, lintian.
+  * debian/{control,maliit-framework-doc.links}:
+    + Add D (doc:pkg): libjs-jquery and symlink to it.
+  * debian/rules:
+    + Add get-orig-source target (for the maintainer's convenience).
+    + Drop DEB_LDFLAGS_MAIN_APPEND variable.
+    + Move API docs to /usr/share/doc/maliit-framework/html. Drop file with
+      LGPL license text.
+    + Enable all hardening flags.
+    + Various fine-tuning adjustments of the maliit-framework-doc bin:pkg.
+  * debian/{rules,control}:
+    + Use pkg-kde-tools' symbolshelper script for maintaining .symbols files.
+    + Add B-Ds xvfb and xauth and re-enable unit tests wrapped by xvfb-run.
+  * debian/*.symbols:
+    + Add .symbols files.
+  * debian/upstream/metadata:
+    + Add file. Comply with DEP-12.
+  * debian/maliit-framework-doc.examples:
+    + Add file. Include example files in doc:pkg.
+  * debian/copyright:
+    + Use secure URL in Format: field.
+    + Add auto-generated copyright.in file.
+    + Update copyright attributions.
+  * debian/maliit-framework-doc.doc-base:
+    + Add file.
+  * debian/maliit-framework-doc.install:
+    + Drop /usr/share/doc/maliit-framework-doc.
+  * debian/source/lintian-overrides:
+    + Override awkward text layout in LICENSE.LGPL.
+    + Ignore lintian's complaint about LICENSE.LGPL not listed in d/copyright.
+  * debian/maliit-framework.lintian-overrides:
+    +Ignore missing maliit-server man page for now.
+
+ -- Mike Gabriel <sunweaver@debian.org>  Mon, 07 Mar 2022 09:34:46 +0100
